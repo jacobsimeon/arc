@@ -1,7 +1,7 @@
 module Arc
   class Engine
     
-    def initialize(config, klass=Reactor)
+    def initialize(config, klass=Engine)
       @klass, @config = klass, config
       Arc::ConnectionHandler.add_connection @klass, @config      
     end
