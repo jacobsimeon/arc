@@ -22,7 +22,7 @@ module Arc
 end
 
 #Example Use:
-# class MyReactor
+# class MyReactorBase
 #   include Arc::Reactor
 #   connect("hello world")
 # end
