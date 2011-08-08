@@ -2,11 +2,14 @@ require 'spec_helper.rb'
 
 describe Arc::ConnectionPool do
   
-  def pool
+  before :each do
     @connection_pool ||= Arc::ConnectionPool.new(
       :adapter => 'sqlite3',
-      :database => 'fixture.sqlite3'
+      :database => 'fixture.sqlite3',
     )
+  end
+  def pool
+    @connection_pool
   end
   
   describe '#new' do
@@ -47,17 +50,19 @@ describe Arc::ConnectionPool do
     
     it 'throws exception if timeout limit is reached' do
       threads = []
-      5.times do |i|
-        threads
-        
-      end
+      #get a connection from 4 threads
+      lambda do
+        7.times do |i|
+          threads << Thread.new(i) do |pool_count|
+            connection = pool.connection
+            connection.should_not be_nil
+          end
+        end
+        threads.each {|t| t.join}
+      end.should raise_error Arc::ConnectionPool::ResourcePoolTimeoutError
       
     end
     
-    it 'yeilds an existing connection when one is available' do
-      
-      
-    end
   end
   
 end

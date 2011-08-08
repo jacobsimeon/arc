@@ -2,7 +2,8 @@ require 'monitor.rb'
 
 module Arc
   class ConnectionPool    
-  
+    class ResourcePoolTimeoutError < StandardError; end
+    
     def initialize(config)
       extend MonitorMixin
       @connections = []
@@ -10,15 +11,22 @@ module Arc
       @queue = new_cond
       @config = config
       @timeout = config[:timeout] || 5
-      @max_connections = config[:max_connections] || 5
+      @size = config[:size] || 5
     end
         
     def connection
       clear_stale_connections!
-      @checked_out[Thread.current.object_id] ||= check_out
+      @checked_out[Thread.current.object_id] ||= checkout
     end    
     
     private
+    def create_resource
+      if connection_available?
+        existing_connection
+      elsif can_create_new?
+        new_connection
+      end      
+    end
     def clear_stale_connections!
       #find all currenly live threads and
       alive = Thread.list.find_all { |t|
@@ -26,7 +34,7 @@ module Arc
       }.map { |thread| thread.object_id }
       dead = @checked_out.keys - alive
       dead.each do |thread|
-        check_in thread
+        checkin thread
       end      
     end
     
@@ -35,44 +43,42 @@ module Arc
     end
     
     def can_create_new?
-      @connections.size < @max_connections
+      @connections.size < @size
     end
     
-    def check_out
+    def checkout
       # Checkout an available connection
-      get_conn = Proc.new do
-        conn = if connection_available?
-          existing_connection
-        elsif can_create_new?
-          new_connection
+      cr = Proc.new do
+        r = create_resource
+        unless r.nil?
+          #for some reason tests don't pass without this
+          sleep 0
+          return r
         end
-        return conn if conn
       end
-          
+      
       synchronize do
-        get_conn.call
+        cr.call
+        #wait for signal or timeout 
         @queue.wait(@timeout)
-        get_conn.call
-      end      
+        cr.call
+      end
+      
+      raise ResourcePoolTimeoutError
     end      
 
-    def check_in(thread_id)
+    def checkin(thread_id)
       conn = @checked_out.delete(thread_id)
-      unless conn.nil?
-        conn.disconnect!
-      end
+      synchronize { @queue.signal }
     end
     
     def new_connection
-      puts "new connection"
-      c = Connection.new(@config)
-      @connections << c
+      @connections << c = Connection.new(@config)
       return c
     end
     
     def existing_connection
-      puts "use existing"
-      connection = (@connections - @checked_out.values).first
+      (@connections - @checked_out.values).first
     end
     
     
