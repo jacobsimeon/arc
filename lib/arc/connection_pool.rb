@@ -71,7 +71,7 @@ module Arc
     end
     
     def add_new_resource
-      @connections << r = create_resource and return r
+      @connections << r = create_resource and r
     end
         
     class Connection; end
