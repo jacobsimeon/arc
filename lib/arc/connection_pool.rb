@@ -25,13 +25,17 @@ module Arc
         @queue.signal 
       end
     end
-        
-    private
+    
     def create_resource
+      Connection.new(@config)
+    end
+    
+    private
+    def find_resource
       if connection_available?
-        existing_connection
+        find_existing_resource
       elsif can_create_new?
-        new_connection
+        add_new_resource
       end      
     end
     
@@ -53,7 +57,7 @@ module Arc
     def checkout
       #Checkout an available connection or create a new one
       synchronize do
-        resource = create_resource
+        resource = find_resource
         return resource unless resource.nil?
         @queue.wait @timeout
         clear_stale_connections!
@@ -62,12 +66,12 @@ module Arc
       raise ResourcePoolTimeoutError
     end      
 
-    def new_connection
-      @connections << c = Connection.new(@config) and c
+    def find_existing_resource
+      (@connections - @checked_out.values).first
     end
     
-    def existing_connection
-      (@connections - @checked_out.values).first
+    def add_new_resource
+      @connections << r = create_resource and return r
     end
         
     class Connection; end

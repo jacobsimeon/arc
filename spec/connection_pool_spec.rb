@@ -6,7 +6,7 @@ describe Arc::ConnectionPool do
     @config ||= {
       :adapter => 'sqlite3',
       :database => 'fixture.sqlite3',
-      :timeout => 0.5
+      :timeout => 0.1
     }
   end
   
@@ -27,18 +27,22 @@ describe Arc::ConnectionPool do
   end
     
   describe '#connection' do
+    
     it 'creates new connection objects for each running thread' do
       pool = Arc::ConnectionPool.new(config)
       threads = thread_connections pool, 4
       checked_out(pool).keys.size.should === 4
-      while threads.size > 0 do
-        t = threads.pop
-        t[:connection].should === checked_out(pool)[t.object_id]
-        t.kill
+      while t = threads.pop do
+        connections = checked_out(pool)
+        connection = connections.delete t.object_id
+        #verify connection is associated to the appropriate thread
+        t[:connection].should === connection
+        #make sure the array isn't just holding duplicate objects
+        connections.values.should_not include(t[:connection])
       end
     end
     
-    it 'clears connections for expired threads' do
+    it 'clears connections from expired threads' do
       pool = Arc::ConnectionPool.new(config)
       threads = thread_connections(pool, 5)
       checked_out(pool).keys.size.should == 5
@@ -52,18 +56,38 @@ describe Arc::ConnectionPool do
         :adapter => :sqlite3,
         :database => 'fixture.sqlite3',
         :size => 1,
-        :timeout => 0.5
+        :timeout => 0.1
       )
-      sleeper = Thread.start do
-        Thread.current[:connection] = mini_pool.connection
-        sleep 10000
-      end
-      Thread.new do
+      connection = mini_pool.connection
+      checked_out(mini_pool).keys.size.should === 1
+      Thread.start do
         lambda { mini_pool.connection }.should raise_error Arc::ConnectionPool::ResourcePoolTimeoutError
-        sleeper.kill      
       end.join
     end
     
+  end
+  
+  describe '#checkin' do
+
+    it 'makes a connection available for use by another thread' do
+      pool = Arc::ConnectionPool.new(
+        :adapter => :sqlite3,
+        :database => 'fixture.sqlite3',
+        :size => 1,
+        :timeout => 0.1
+      )
+      connection = pool.connection
+      checked_out(pool).keys.size.should === 1
+      Thread.start do
+        lambda{ pool.connection }.should raise_error Arc::ConnectionPool::ResourcePoolTimeoutError
+      end.join
+      pool.checkin Thread.current.object_id
+      final = Thread.start do
+        Thread.current[:connection] = pool.connection
+      end.join
+      final[:connection].should === connection      
+    end   
+
   end
   
 end
