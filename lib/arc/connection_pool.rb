@@ -63,26 +63,15 @@ module Arc
     end      
 
     def new_connection
-      @connections << c = Connection.new(@config)
-      return c
+      @connections << c = Connection.new(@config) and c
     end
     
     def existing_connection
       (@connections - @checked_out.values).first
     end
+        
+    class Connection; end
     
-    
-    class Connection
-      def initialize(config)
-        @free = true
-        @config = config
-        #inspect config and determine which adapter to use
-        #create an instance of the appropriate subclass 
-      end
-      def disconnect!
-        #do whatever you need to do just before this object gets removed from its connection pool
-      end
-    end
   end
 
 end
