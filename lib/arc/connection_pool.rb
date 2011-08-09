@@ -15,10 +15,17 @@ module Arc
     end
         
     def connection
-      clear_stale_connections!
+      #clear_stale_connections!
       @checked_out[Thread.current.object_id] ||= checkout
     end    
     
+    def checkin(thread_id)
+      synchronize do
+        @checked_out.delete(thread_id)
+        @queue.signal 
+      end
+    end
+        
     private
     def create_resource
       if connection_available?
@@ -27,19 +34,16 @@ module Arc
         new_connection
       end      
     end
+    
     def clear_stale_connections!
-      #find all currenly live threads and
-      alive = Thread.list.find_all { |t|
-        t.alive?
-      }.map { |thread| thread.object_id }
+      #find all currenly live threads and check in their corresponding connections
+      alive = Thread.list.find_all { |t| t.alive? }.map { |thread| thread.object_id }
       dead = @checked_out.keys - alive
-      dead.each do |thread|
-        checkin thread
-      end      
+      dead.each { |t| checkin t }
     end
     
     def connection_available?
-      @checked_out.size < @connections.size
+      @checked_out.keys.size < @connections.size
     end
     
     def can_create_new?
@@ -47,31 +51,17 @@ module Arc
     end
     
     def checkout
-      # Checkout an available connection
-      cr = Proc.new do
-        r = create_resource
-        unless r.nil?
-          #for some reason tests don't pass without this
-          sleep 0
-          return r
-        end
-      end
-      
+      #Checkout an available connection or create a new one
       synchronize do
-        cr.call
-        #wait for signal or timeout 
-        @queue.wait(@timeout)
-        cr.call
+        resource = create_resource
+        return resource unless resource.nil?
+        @queue.wait @timeout
+        clear_stale_connections!
       end
-      
+      return checkout if can_create_new? || connection_available?
       raise ResourcePoolTimeoutError
     end      
 
-    def checkin(thread_id)
-      conn = @checked_out.delete(thread_id)
-      synchronize { @queue.signal }
-    end
-    
     def new_connection
       @connections << c = Connection.new(@config)
       return c
