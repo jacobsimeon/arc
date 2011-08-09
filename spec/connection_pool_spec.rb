@@ -51,7 +51,7 @@ describe Arc::ConnectionPool do
       checked_out(pool)[Thread.current.object_id].should === c      
     end
     
-    it 'throws exception when no connections are available after timeout' do
+    it 'raises error when no connections are available after timeout' do
       mini_pool = Arc::ConnectionPool.new(
         :adapter => :sqlite3,
         :database => 'fixture.sqlite3',

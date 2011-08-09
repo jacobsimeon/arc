@@ -10,6 +10,6 @@ module Arc
     
     def self.connection_for klass
       connections[klass] unless connections[klass].nil?
-    end 
+    end
   end
 end
