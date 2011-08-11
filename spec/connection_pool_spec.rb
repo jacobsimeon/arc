@@ -28,15 +28,14 @@ describe Arc::ConnectionPool do
     
   describe '#connection' do
     
-    it 'creates new connection objects for each running thread' do
+    it 'creates a new connection object for each running thread' do
       pool = Arc::ConnectionPool.new(config)
       threads = thread_connections pool, 4
       checked_out(pool).keys.size.should === 4
       while t = threads.pop do
         connections = checked_out(pool)
-        connection = connections.delete t.object_id
         #verify connection is associated to the appropriate thread
-        t[:connection].should === connection
+        t[:connection].should === connections.delete(t.object_id)
         #make sure the array isn't just holding duplicate objects
         connections.values.should_not include(t[:connection])
       end
@@ -68,7 +67,6 @@ describe Arc::ConnectionPool do
   end
   
   describe '#checkin' do
-
     it 'makes a connection available for use by another thread' do
       pool = Arc::ConnectionPool.new(
         :adapter => :sqlite3,
