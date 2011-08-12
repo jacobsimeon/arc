@@ -11,7 +11,7 @@ module Arc
     
     module ClassMethods
       def connect(config, klass=self)
-        @@data_store = Arc::Engine.new(config, klass)
+        @@data_store = Arc::DataStore.new(config, klass)
       end      
       def data_store
         @@data_store

@@ -1,11 +1,14 @@
 module Arc
-  class Engine
+  class DataStore
     
     def initialize(config, klass=Engine)
       @klass, @config = klass, config
-      Arc::ConnectionHandler.add_connection @klass, @config      
+      Arc::ConnectionHandler.add_connection @config, @klass
     end
     
+    def klass
+      @klass
+    end
     def to_h
       #contains a hash for each table with an array of column names and column objects
       #ex:
