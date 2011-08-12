@@ -61,9 +61,9 @@ module Arc
         return resource unless resource.nil?
         @queue.wait @timeout
         clear_stale_connections!
+        raise ResourcePoolTimeoutError unless can_create_new? or connection_available?
       end
-      return checkout if can_create_new? || connection_available?
-      raise ResourcePoolTimeoutError
+      checkout
     end      
 
     def find_existing_resource
@@ -71,7 +71,7 @@ module Arc
     end
     
     def add_new_resource
-      @connections << r = create_resource and r
+      @connections << r = create_resource; r
     end
     
   end
