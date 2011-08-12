@@ -1,5 +1,6 @@
 module Arc
   class ConnectionHandler
+    
     def self.add_connection(config, klass=Object)
       connections[klass] ||= ConnectionPool.new(config) if connections[klass].nil?
     end
