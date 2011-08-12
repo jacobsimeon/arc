@@ -20,8 +20,8 @@ module Arc
       #   }
       # } 
     end
-    alias :to_hash
-    
+    alias :to_hash :to_h
+        
     def adapter
       #the adapter for arel to use, so it can work around inconsistencies in different databases
     end

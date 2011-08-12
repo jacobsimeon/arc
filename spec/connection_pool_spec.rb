@@ -84,7 +84,17 @@ describe Arc::ConnectionPool do
         Thread.current[:connection] = pool.connection
       end.join
       final[:connection].should === connection      
-    end   
+    end
+    it 'uses the current thread id when no argument is passed' do
+      pool = Arc::ConnectionPool.new(
+        :adapter => :sqlite3,
+        :database => 'fixture.sqlite3',
+        :size => 1,
+        :timeout => 0.1
+      )
+      pool.connection
+      pool.checkin      
+    end
 
   end
   

@@ -19,7 +19,7 @@ module Arc
       @checked_out[Thread.current.object_id] ||= checkout
     end    
     
-    def checkin(thread_id)
+    def checkin(thread_id=Thread.current.object_id)
       synchronize do
         @checked_out.delete(thread_id)
         @queue.signal 
