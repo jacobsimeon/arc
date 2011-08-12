@@ -3,13 +3,14 @@ require 'spec_helper'
 class FakeReactor
   include Arc::Reactor
 end
-
 class SuperFakeReactor < FakeReactor; end
-
-
 
 module Arc
   describe Reactor do
+    before :each do
+      ConnectionHandler.clear_connections
+    end
+    
     describe '#connect' do
       it 'creates a new connection pool and registers it with the connection handler' do
         FakeReactor.connect(:adapter => :sqlite3, :database => 'fake_database.sqlite3')
@@ -24,7 +25,6 @@ module Arc
         ConnectionHandler.connections[SuperFakeReactor].should be_a(ConnectionPool)
         ConnectionHandler.connections[SuperFakeReactor].object_id.should_not be(ConnectionHandler.connections[FakeReactor].object_id)
         SuperFakeReactor.data_store.should_not be(FakeReactor.data_store)
-        
       end     
     end
     describe '#data_source' do

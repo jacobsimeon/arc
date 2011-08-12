@@ -17,6 +17,10 @@ module Arc
     def self.connections
       @@connections ||= {}
     end
+    
+    def self.clear_connections
+      @@connections = {}
+    end
         
   end
 end

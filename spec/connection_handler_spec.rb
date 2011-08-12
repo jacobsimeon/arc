@@ -35,7 +35,7 @@ module Arc
       it 'yields a connection object to the passed block' do
         seed_connection Object
         ConnectionHandler.with_connection do |connection|
-          connection.should be_a(ConnectionPool::Connection)
+          connection.should be_a(Connection)
         end
       end
       it 'checks in the connection after use' do
