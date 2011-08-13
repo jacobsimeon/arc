@@ -4,7 +4,7 @@ module Arc
   class ConnectionPool    
     class ResourcePoolTimeoutError < StandardError; end
     
-    def initialize(config)
+    def initialize config
       extend MonitorMixin
       @connections = []
       @checked_out = {}
@@ -27,7 +27,7 @@ module Arc
     end
     
     def create_resource
-      Connection.new(@config)
+      Connections.connection_for @config
     end
     
     private
@@ -36,7 +36,7 @@ module Arc
         find_existing_resource
       elsif can_create_new?
         add_new_resource
-      end      
+      end
     end
     
     def clear_stale_connections!

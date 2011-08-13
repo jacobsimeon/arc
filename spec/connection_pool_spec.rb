@@ -20,7 +20,7 @@ module Arc
       count.times do |i|
         threads << Thread.start do
           connection = pool.connection
-          connection.should be_an(Connection)
+          connection.should be_an(Connections::Connection)
           Thread.current[:connection] = connection
         end
       end
