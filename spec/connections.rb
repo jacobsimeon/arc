@@ -13,6 +13,10 @@ module Arc
       it 'raises AdapterNotFoundError when the specified adapter does not exist' do
         lambda {Connections.connection_for :adapter => :superman}.should raise_error(AdapterNotFoundError)
       end
+      
+      it 'raise AdapterNotSpecifiedError when configuration does not have an :adapter key' do
+        lambda {Connections.connection_for :superman => 1 }.should raise_error(AdapterNotSpecifiedError)
+      end
 
     end
   end  

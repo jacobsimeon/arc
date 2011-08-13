@@ -4,16 +4,22 @@ require 'arc/connections/sqlite3_connection.rb'
 module Arc
   module Connections
     class AdapterNotFoundError < StandardError; end
+    class AdapterNotSpecifiedError < StandardError; end
     
     CONNECTIONS ||= {
       :sqlite3 => Sqlite3Connection
     }
 
     def self.connection_for config
-      unless CONNECTIONS.keys.include? config[:adapter].to_sym
-        raise AdapterNotFoundError, "Arc::Connections cannot find adapter #{config[:adapter]}"
+      unless config.keys.include? :adapter
+        raise AdapterNotSpecifiedError, "Arc::Connections - please specify an adapter"
       end
-      CONNECTIONS[config[:adapter].to_sym].new config
+      adapter = config[:adapter].to_sym
+      unless CONNECTIONS.keys.include? adapter
+        raise AdapterNotFoundError, "Arc::Connections cannot find adapter #{adapter}"
+      end
+      
+      CONNECTIONS[adapter].new config
     end
     
   end
