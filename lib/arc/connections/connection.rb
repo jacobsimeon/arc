@@ -8,9 +8,6 @@ module Arc
       def active?
         not_implemented :active?
       end
-      def reconnect!
-        not_implemented :reconnect!
-      end
       
       private
       def not_implemented method

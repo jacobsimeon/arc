@@ -8,11 +8,9 @@ module Arc
         c = Connection.new
         c.should respond_to(:execute)
         c.should respond_to(:active?)
-        c.should respond_to(:reconnect!)
         
         lambda { c.execute "INSERT INTO superheros VALUES(superman)"}.should raise_error(NotImplementedError)
         lambda { c.active? }.should raise_error(NotImplementedError)
-        lambda { c.reconnect! }.should raise_error(NotImplementedError)        
       end
             
     end
