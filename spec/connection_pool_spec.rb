@@ -4,9 +4,9 @@ module Arc
   describe ConnectionPool do
   
     def config
-      @config ||= {
+      @config = {
         :adapter => 'sqlite3',
-        :database => 'fixture.sqlite3',
+        :database => ':memory:',
         :timeout => 0.1
       }
     end
@@ -54,7 +54,7 @@ module Arc
       it 'raises error when no connections are available after timeout' do
         mini_pool = ConnectionPool.new(
           :adapter => :sqlite3,
-          :database => 'fixture.sqlite3',
+          :database => ':memory:',
           :size => 1,
           :timeout => 0.1
         )
@@ -71,7 +71,7 @@ module Arc
       it 'makes a connection available for use by another thread' do
         pool = ConnectionPool.new(
           :adapter => :sqlite3,
-          :database => 'fixture.sqlite3',
+          :database => ':memory:',
           :size => 1,
           :timeout => 0.1
         )

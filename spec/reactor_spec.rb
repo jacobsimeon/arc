@@ -13,7 +13,7 @@ module Arc
     
     describe '#connect' do
       it 'creates a new connection pool and registers it with the connection handler' do
-        FakeReactor.connect(:adapter => :sqlite3, :database => 'fake_database.sqlite3')
+        FakeReactor.connect(:adapter => :sqlite3, :database => ':memory:')
         ConnectionHandler.connections[FakeReactor].should be_a(ConnectionPool)      
       end
       it 'redefines the data_source for derived classes with a different configuration' do
