@@ -5,9 +5,6 @@ module Arc
       def execute sql
         not_implemented :execute
       end
-      def active?
-        not_implemented :active?
-      end
       
       private
       def not_implemented method
