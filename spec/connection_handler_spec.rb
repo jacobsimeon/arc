@@ -6,28 +6,19 @@ module Arc
     def seed_connection(klass)
       ConnectionHandler.add_connection({
         :adapter => :sqlite3,
-        :database => 'my_test_database.sqlite3'          
+        :database => ':memory:'          
       }, klass)      
     end
 
-
     describe 'add_connection' do
       it 'creates a connection pool' do
-        pool = ConnectionHandler.add_connection({
-          :adapter => :sqlite3,
-          :database => 'my_test_database.sqlite3'          
-        })
-        pool.should be_a(ConnectionPool)
+        seed_connection Object
+        ConnectionHandler[Object].should be_a(ConnectionPool)
       end
+      
       it 'does not create a connection for a class with an already existing connection' do
-        pool = ConnectionHandler.add_connection({
-          :adapter => :sqlite3,
-          :database => 'my_test_database.sqlite3'          
-        })
-        pool.object_id.should === ConnectionHandler.add_connection({
-          :adapter => :sqlite3,
-          :database => 'my_test_database.sqlite3'          
-        }).object_id    
+        pool = seed_connection Object
+        seed_connection(Object).should be(pool)        
       end
     end 
 
