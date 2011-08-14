@@ -5,6 +5,10 @@ module Arc
       connections[klass] ||= ConnectionPool.new(config) if connections[klass].nil?
     end
     
+    def self.[] klass
+      connections[klass]
+    end
+    
     def self.connections
       @@connections ||= {}
     end
