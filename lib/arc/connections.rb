@@ -5,6 +5,7 @@ module Arc
   module Connections
     class AdapterNotFoundError < StandardError; end
     class AdapterNotSpecifiedError < StandardError; end
+    class DatabaseNotSpecifiedError < StandardError; end
     
     CONNECTIONS ||= {
       :sqlite3 => Sqlite3Connection
@@ -17,6 +18,9 @@ module Arc
       adapter = config[:adapter].to_sym
       unless CONNECTIONS.keys.include? adapter
         raise AdapterNotFoundError, "Arc::Connections cannot find adapter #{adapter}"
+      end
+      unless config.keys.include? :database
+        raise DatabaseNotSpecifiedError, "Unable to establish connection. No database specified."
       end
       
       CONNECTIONS[adapter].new config
