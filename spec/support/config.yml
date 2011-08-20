@@ -1,0 +1,16 @@
+# Configurations for various database connections used in specs
+#dummy config for use when a connection to an actual database is not necessary for the spec
+empty:
+  database: none
+  adapter: default
+  timeout: 0.1
+
+tiny:
+  database: none
+  adapter: default
+  pool: 1
+  timeout: 0.1
+
+sqlite:
+  database: ':memory:'
+  adapter: sqlite3
