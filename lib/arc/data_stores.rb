@@ -15,15 +15,15 @@ module Arc
       def [](adapter)
         adapter = adapter.to_sym if adapter.is_a? String
         return STORES[adapter] unless STORES[adapter].nil?
+        #require connection
         begin
           require "arc/data_stores/#{adapter}_data_store"
           STORES[adapter] = const_get "#{adapter.to_s.capitalize}DataStore"
         rescue LoadError
           raise AdapterNotFoundError, "Unable to find #{adapter} adapter, make sure it is in your load path"
         end
-      end     
+      end
       
     end
-    
-  end  
+  end
 end

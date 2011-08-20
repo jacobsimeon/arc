@@ -6,23 +6,28 @@ module Arc
     def checked_out(pool)
       pool.instance_variable_get(:@checked_out)
     end
+    
+    def create_pool key
+      ConnectionPool.new ArcTest.config[key], do
+        rand
+      end
+    end
   
     def thread_connections(pool, count=4)
       threads = []
       count.times do |i|
         threads << Thread.start do
           connection = pool.connection
-          connection.should be_an(Connections::AbstractConnection)
           Thread.current[:connection] = connection
         end
       end
       threads.each {|t| t.join }    
     end
-    
+        
     describe '#connection' do
     
       it 'creates a new connection object for each running thread' do
-        pool = ConnectionPool.new ArcTest.config[:empty]
+        pool = create_pool :empty
         threads = thread_connections pool, 4
         checked_out(pool).keys.size.should === 4
         while t = threads.pop do
@@ -35,7 +40,7 @@ module Arc
       end
     
       it 'clears connections from expired threads' do
-        pool = ConnectionPool.new ArcTest.config[:empty]
+        pool = create_pool :empty
         threads = thread_connections(pool, 5)
         checked_out(pool).keys.size.should == 5
         c = pool.connection
@@ -44,7 +49,7 @@ module Arc
       end
     
       it 'raises error when no connections are available after timeout' do
-        mini_pool = ConnectionPool.new ArcTest.config[:tiny]
+        mini_pool = create_pool :tiny
         connection = mini_pool.connection
         checked_out(mini_pool).keys.size.should === 1
         Thread.start do
@@ -53,15 +58,10 @@ module Arc
       end
     
     end
-    
-    describe '#with_connection' do
-      
-      
-    end
-    
+        
     describe '#checkin' do
       it 'makes a connection available for use by another thread' do
-        pool = ConnectionPool.new ArcTest.config[:tiny]
+        pool = create_pool :tiny
         connection = pool.connection
         checked_out(pool).keys.size.should === 1
         Thread.start do
@@ -75,7 +75,7 @@ module Arc
       end
       
       it 'uses the current thread id when no argument is passed' do
-        pool = ConnectionPool.new ArcTest.config[:empty]
+        pool = create_pool :empty
         c = pool.connection
         pool.checkin
         pool.connection.should be(c)

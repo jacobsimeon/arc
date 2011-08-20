@@ -1,9 +1,16 @@
 module Arc
   module DataStores
     class AbstractDataStore
-        
+      
+      def create_connection
+        rand
+      end
+      
       def initialize config
-        @pool = ConnectionPool.new(config)
+        @config = config
+        @pool = ConnectionPool.new config, do
+          create_connection
+        end
       end
     
       def to_h
@@ -21,11 +28,7 @@ module Arc
         # } 
       end
       alias :to_hash :to_h
-        
-      def adapter
-        #the adapter for arel to use, so it can work around inconsistencies in different databases
-      end
-    
+            
       def primary_key name
         #get the primary key column object for the passed table name
       end
