@@ -1,10 +1,8 @@
 require 'bundler/gem_tasks'
 
-
 task :test do
   system 'rspec spec'  
 end
-
 
 #example use of passing arguments to rake
 # task :say, :word, :person do |task, args|

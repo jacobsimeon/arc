@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Arc
   module Connections
-    describe MysqlConnection do
+    describe MySqlConnection do
       
       
     end 
