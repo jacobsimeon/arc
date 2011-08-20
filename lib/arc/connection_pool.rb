@@ -11,7 +11,7 @@ module Arc
       @queue = new_cond
       @config = config
       @timeout = config[:timeout] || 5
-      @size = config[:size] || 5
+      @size = config[:pool] || 5
     end
         
     def connection

@@ -9,6 +9,7 @@ module Arc
     class DatabaseNotSpecifiedError < StandardError; end
     
     CONNECTIONS ||= {
+      :default => Connection,
       :sqlite3 => Sqlite3Connection
     }
 

@@ -4,10 +4,7 @@ module Arc
   describe ConnectionHandler do
 
     def seed_connection(klass)
-      ConnectionHandler.add_connection({
-        :adapter => :sqlite3,
-        :database => ':memory:'          
-      }, klass)      
+      ConnectionHandler.add_connection ArcTest.config[:empty], klass
     end
 
     describe 'add_connection' do
