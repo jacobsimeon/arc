@@ -11,7 +11,7 @@ module Arc
     
     module ClassMethods
       def connect(config)
-        @data_store = Arc::DataStores[config[:adapter]].new config, self
+        @data_store = Arc::DataStores[config[:adapter]].new config
       end      
       def data_store
         @data_store

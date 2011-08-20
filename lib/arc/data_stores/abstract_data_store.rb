@@ -1,15 +1,11 @@
 module Arc
   module DataStores
-    class DataStore
-    
-      def initialize(config, klass=Object)
-        @klass, @config = klass, config
-        Arc::ConnectionHandler.add_connection @config, @klass
+    class AbstractDataStore
+        
+      def initialize config
+        @pool = ConnectionPool.new(config)
       end
     
-      def klass
-        @klass
-      end
       def to_h
         #contains a hash for each table with an array of column names and column objects
         #ex:
@@ -39,15 +35,15 @@ module Arc
       end
     
       def tables
-        @tables
+        #an array of tables in the data store
       end
     
       def quote_table_name name
-        #wrap the table name in quotes
+        #wrap a table name in quotes
       end
 
       def quote_column_name name
-        #wrap the column name in quotes
+        #wrap a column name in quotes
       end
 
       def quote thing, column = nil
@@ -70,14 +66,17 @@ module Arc
       def destroy query
         #destroy existing data
       end
-
+          
       private
-      def connection
-        Arc::ConnectionHandler.connection_for @klass
+      def with_connection
+        yield @pool.connection
+        @pool.checkin
       end
 
       def execute query
-        #run an operation
+        with_connection do |connection|
+          connection.execute query
+        end
       end
     
     end
