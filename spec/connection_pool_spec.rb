@@ -12,7 +12,7 @@ module Arc
       count.times do |i|
         threads << Thread.start do
           connection = pool.connection
-          connection.should be_an(Connections::Connection)
+          connection.should be_an(Connections::AbstractConnection)
           Thread.current[:connection] = connection
         end
       end
@@ -53,7 +53,12 @@ module Arc
       end
     
     end
-  
+    
+    describe '#with_connection' do
+      
+      
+    end
+    
     describe '#checkin' do
       it 'makes a connection available for use by another thread' do
         pool = ConnectionPool.new ArcTest.config[:tiny]

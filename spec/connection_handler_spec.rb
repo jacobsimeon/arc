@@ -23,7 +23,7 @@ module Arc
       it 'yields a connection object to the passed block' do
         seed_connection Object
         ConnectionHandler.with_connection do |connection|
-          connection.should be_a(Connections::Connection)
+          connection.should be_a(Connections::AbstractConnection)
         end
       end
       it 'checks in the connection after use' do

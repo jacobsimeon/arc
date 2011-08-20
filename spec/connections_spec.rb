@@ -6,7 +6,6 @@ module Arc
 
       it 'creates a connection for the specified adapter' do
         sqlite3_connection = Connections.connection_for(:adapter => :sqlite3, :database => ':memory:')
-        sqlite3_connection.should be_a(Connection)
         sqlite3_connection.should be_a(Sqlite3Connection)
       end
       

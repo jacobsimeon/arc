@@ -1,4 +1,4 @@
-require 'arc/connections/connection.rb'
+require 'arc/connections/abstract_connection.rb'
 require 'arc/connections/sqlite3_connection.rb'
 
 module Arc
@@ -8,7 +8,7 @@ module Arc
     class DatabaseNotSpecifiedError < StandardError; end
     
     CONNECTIONS ||= {
-      :default => Connection,
+      :default => AbstractConnection,
       :sqlite3 => Sqlite3Connection
     }
 
