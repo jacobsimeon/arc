@@ -1,6 +1,5 @@
 require 'arc/connections/connection.rb'
 require 'arc/connections/sqlite3_connection.rb'
-require 'arc/connections/mysql_connection.rb'
 
 module Arc
   module Connections
