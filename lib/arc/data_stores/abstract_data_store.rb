@@ -78,8 +78,9 @@ module Arc
       
       def with_connection
         #convenience method to yield a connection object then check it back in
-        yield @pool.connection
+        result = yield pool.connection
         @pool.checkin
+        result
       end
       
     end
