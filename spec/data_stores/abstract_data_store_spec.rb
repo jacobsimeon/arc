@@ -7,15 +7,17 @@ module Arc
       describe '#new' do
         it 'creates an instance which has access to a connection pool' do
           store = AbstractDataStore.new ArcTest.config[:empty]
-          pool = store.instance_variable_get(:@pool)
+          pool = store.send :pool
           pool.should be_a(ConnectionPool)
-          pool.connection.should be_a(Float)
-          pool.checkin
         end
+        
+        it 'does not define connection creation' do
+          store = AbstractDataStore.new ArcTest.config[:empty]
+          pool = store.send :pool
+          ->{ pool.connection}.should raise_error(NotImplementedError)
+        end        
       end
-      
-      
-      
+            
     end
   end
 end
