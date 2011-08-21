@@ -63,7 +63,7 @@ module Arc
         raise NotImplementedError
       end
 
-      #better semantics for a class that deals with connection objects
+      #better semantics for a class that deals with 'connections' instead of 'resources'
       def create_resource; create_connection; end
       alias :connection :resource
       alias :with_connection :with_resource
