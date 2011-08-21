@@ -57,15 +57,14 @@ module Arc
       def execute query
         #adapters should override this method to execute an arbitrary query against the database
         raise NotImplementedError
-      end      
-      alias :connection :resource
-      alias :with_connection :with_resource
-      def create_resource
-        create_connection
       end
       def create_connection
         raise NotImplementedError
       end           
+      #better semantics for a class that deals with connection objects
+      def create_resource; create_connection; end
+      alias :connection :resource
+      alias :with_connection :with_resource
     end
   end
 end
