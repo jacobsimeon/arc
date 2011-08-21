@@ -13,4 +13,4 @@ tiny:
 
 sqlite:
   database: ':memory:'
-  adapter: sqlite  
+  adapter: sqlite

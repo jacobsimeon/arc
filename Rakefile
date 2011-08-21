@@ -8,10 +8,10 @@ task :test do
 end
 
 namespace :test do
-  task :sqlite do
-    ENV['ARC_ENV'] = 'sqlite'
-    system 'rspec spec/data_stores/data_store_spec.rb'
-  end  
+  task :adapter, :env do |task, args|
+    ENV['ARC_ENV'] = args.env
+    system 'rspec spec/data_stores/data_store_spec.rb'    
+  end
 end
 
 #example use of passing arguments to rake

@@ -8,14 +8,15 @@ module Arc
     
     class << self
       def create_store config
-        raise AdapterNotSpecifiedError if config[:adapter].nil?
+        if config[:adapter].nil?
+          raise AdapterNotSpecifiedError, "Unable to determine adapter for data store - adapter not specified!"
+        end
         self[config[:adapter]].new config
       end
       
       def [](adapter)
         adapter = adapter.to_sym if adapter.is_a? String
         return STORES[adapter] unless STORES[adapter].nil?
-        #require connection
         begin
           require "arc/data_stores/#{adapter}_data_store"
           STORES[adapter] = const_get "#{adapter.to_s.capitalize}DataStore"
