@@ -52,8 +52,9 @@ module Arc
         #destroy existing data
         raise NotImplementedError
       end
-
+      
       private      
+      private :with_resource
       def execute query
         #adapters should override this method to execute an arbitrary query against the database
         raise NotImplementedError

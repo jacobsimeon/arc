@@ -7,7 +7,7 @@ module Arc
       describe '#new' do
         it 'does not define connection creation' do
           store = AbstractDataStore.new ArcTest.config[:empty]
-          ->{ store.with_connection }.should raise_error(NotImplementedError)
+          ->{ store.send :with_connection }.should raise_error(NotImplementedError)
         end        
       end
             
