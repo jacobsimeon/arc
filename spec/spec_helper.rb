@@ -4,6 +4,7 @@ require 'aruba'
 require 'arc'
 
 
+ENV['ARC_ENV'] ||= 'sqlite'
 module ArcTest
   class << self
     

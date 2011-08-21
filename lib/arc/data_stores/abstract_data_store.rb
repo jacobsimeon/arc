@@ -1,11 +1,7 @@
 module Arc
   module DataStores
-    class AbstractDataStore
-      
-      def initialize config
-        @config = config
-      end
-            
+    class AbstractDataStore < ResourcePool
+                        
       def primary_key name
         #get the primary key column object for the passed table name
         raise NotImplementedError        
@@ -57,32 +53,19 @@ module Arc
         raise NotImplementedError
       end
           
-      private
-      def create_connection
-        #this is the method that will be called each time the connection pool needs to create a new connection
-        raise NotImplementedError
-      end
-      
+      private      
       def execute query
         #adapters should override this method to execute an arbitrary query against the database
         raise NotImplementedError
-      end          
-
-      def pool
-        #a pool of connection objects created by #create_connection
-        #the connection pool provides thread safety
-        @pool ||= ConnectionPool.new @config, do
-          create_connection
-        end
+      end      
+      alias :connection :resource
+      alias :with_connection :with_resource
+      def create_resource
+        create_connection
       end
-      
-      def with_connection
-        #convenience method to yield a connection object then check it back in
-        result = yield pool.connection
-        @pool.checkin
-        result
-      end
-      
+      def create_connection
+        raise NotImplementedError
+      end           
     end
   end
 end
