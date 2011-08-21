@@ -11,7 +11,7 @@ module Arc
       describe '#new' do
         it 'creates a SqliteDataStore with a connection to sqlite database' do
           store.send :with_connection do |connection|
-            connection.should be_a(SQLite3::Database)
+            connection.should_not be_nil
           end
         end
       end
