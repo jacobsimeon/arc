@@ -21,16 +21,23 @@ module ArcTest
     end
     
     def load_schema
-      store.send :execute, File.read("#{File.dirname __FILE__}/support/schemas/#{ENV['ARC_ENV']}.sql")
-    end
-    def drop_schema
-      drop_file = "#{File.dirname __FILE__}/support/schemas/drop_#{ENV['ARC_ENV']}.sql"
-      if File.exists? drop_file
-        store.send :execute, File.read(drop_file)#remove the schema
+      File.read("#{File.dirname __FILE__}/support/schemas/#{ENV['ARC_ENV']}.sql").split(';').each do |statement|
+        store.send :execute, statement
       end
     end
+    
+    def drop_schema    
+      if config[ENV['ARC_ENV'].to_sym][:adapter] == 'sqlite'
+        File.delete config[ENV['ARC_ENV'].to_sym][:database] and return
+      end
+      drop_file = "#{File.dirname __FILE__}/support/schemas/drop_#{ENV['ARC_ENV']}.sql"
+      if File.exists? drop_file
+        store.send :execute, File.read(drop_file)
+      end
+    end
+    
     def store
-      @store ||= Arc::DataStores.create_store config[ENV['ARC_ENV'].to_sym]    
+      @store ||= Arc::DataStores.create_store config[ENV['ARC_ENV'].to_sym]
     end
     
   end

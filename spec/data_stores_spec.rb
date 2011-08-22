@@ -32,8 +32,8 @@ module Arc
       end
 
       it 'creates and returns a new instance of the specified data store' do
-        store = DataStores.create_store ArcTest.config[:empty]
-        store.should be_a(DataStores::DefaultDataStore)  
+        store = DataStores.create_store ArcTest.config[:sqlite]
+        store.should be_a(DataStores::AbstractDataStore)  
       end
             
     end

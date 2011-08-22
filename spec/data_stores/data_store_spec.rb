@@ -2,22 +2,27 @@ require 'spec_helper'
 
 module Arc
   module DataStores
-    describe 'The data store' do
-      
-      before :all do
-        ArcTest.load_schema
-      end
-      after :all do
-        ArcTest.drop_schema
-      end
-      
+    describe 'The data store' do      
       describe '#execute' do
-        it 'executes the query' do
-          result = ArcTest.store.send :execute, 'SELECT * from sqlite_master'
-          result[0].should be_a(Hash)
-          result[0]['type'].should == 'table'
-          result[0]['name'].should == 'superheros'          
+        
+        before :all do
+          ArcTest.load_schema
         end
+        after :all do
+          ArcTest.drop_schema
+        end
+        
+        it 'executes the query' do
+          heros = ['superman', 'batman', 'spiderman']
+          result = ArcTest.store.send :execute, 'SELECT * FROM superheros'
+          result.size.should == 3
+          result.each do |h| 
+            h.should be_a(Hash)
+            h.symbolize_keys!
+            heros.should include(h[:name])
+          end
+        end
+        
       end
                   
     end
