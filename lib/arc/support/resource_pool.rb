@@ -3,7 +3,7 @@ require 'monitor'
 class ResourcePool
   class ResourcePoolTimeoutError < StandardError; end
   
-  def initialize config, *args
+  def initialize config
     extend MonitorMixin
     @config = config
   end
