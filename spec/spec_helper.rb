@@ -42,3 +42,4 @@ module ArcTest
     
   end
 end
+Arel::Table.engine = ArcTest.store

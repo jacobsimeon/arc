@@ -14,7 +14,10 @@ module Arc
         
         it 'reads existing data' do
           heros = ['superman', 'batman', 'spiderman']
-          result = ArcTest.store.read 'SELECT * FROM superheros'
+          superheros = Arel::Table.new :superheros
+          query = superheros.project('*')
+          
+          result = ArcTest.store.read query
           result.size.should == 3
           result.each do |h| 
             h.should be_a(Hash)

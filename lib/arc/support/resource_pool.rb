@@ -17,6 +17,10 @@ class ResourcePool
   def create_resource
     raise NotImplementedError
   end
+
+  def config
+    @config ||= {}
+  end
   
   private
   def queue
@@ -33,9 +37,6 @@ class ResourcePool
   end
   def size
     config[:pool] || 5
-  end
-  def config
-    @config ||= {}
   end
 
   def resource

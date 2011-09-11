@@ -1,3 +1,4 @@
+require 'arc/data_stores/quoting'
 require 'arc/data_stores/abstract_data_store'
 module Arc
   module DataStores
@@ -9,7 +10,8 @@ module Arc
     class << self
       def create_store config
         if config[:adapter].nil?
-          raise AdapterNotSpecifiedError, "Unable to determine adapter for data store - adapter not specified!"
+          m = "Unable to determine adapter for data store - adapter not specified!"
+          raise AdapterNotSpecifiedError, m
         end
         self[config[:adapter]].new config
       end
@@ -21,7 +23,8 @@ module Arc
           require "arc/data_stores/#{adapter}_data_store"
           STORES[adapter] = const_get "#{adapter.to_s.capitalize}DataStore"
         rescue LoadError
-          raise AdapterNotFoundError, "Unable to find #{adapter} adapter, make sure it is in your load path"
+          m = "Unable to find #{adapter} adapter, make sure it is in your load path"
+          raise AdapterNotFoundError, m
         end
       end
       
