@@ -15,7 +15,7 @@ module Arc
     
       def tables
         #an array of tables in the data store
-        raise NotImplementedError        
+        raise NotImplementedError
       end
     
       def create query
