@@ -3,7 +3,7 @@ require 'bigdecimal'
 
 module Arc
   module Quoting
-    class CannotCastValueError < StandardError; end
+    #class CannotCastValueError < StandardError; end
     # Quotes the column name. Defaults to no quoting.
     def quote_column_name(column_name)
       column_name
@@ -18,7 +18,7 @@ module Arc
       case klass
       when String, Symbol
         method = "quote_#{klass.to_s}"
-        return send method, value
+        return send method, value if respond_to? method, :include_private => true
       else
         while klass.name do
           method = "quote_#{klass.name.downcase.gsub(/class/,'')}"
