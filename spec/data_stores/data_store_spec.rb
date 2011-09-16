@@ -9,9 +9,29 @@ module Arc
       after :all do
         ArcTest.drop_schema
       end
+      describe '#create' do
+        it 'creates a new record' do
+          query = "SELECT * FROM superheros WHERE name = 'green hornet'"
+          result = ArcTest.store.read query
+          result.size.should == 0
+          
+          ArcTest.store.create "INSERT INTO superheros (name) VALUES('green hornet');"
+          ArcTest.store.read(query).size.should == 1
+          
+          #cleanup
+          ArcTest.store.destroy "DELETE FROM superheros where name = 'green hornet'"
+                    
+        end
+        it 'returns the record with a populated primary key' do
+          result = ArcTest.store.create "INSERT INTO superheros (name) VALUES('green lantern')"
+          result[:id].should_not be_nil
+          result[:name].should == 'green lantern'
+          #cleanup
+          ArcTest.store.destroy "DELETE FROM superheros where name = 'green lantern'"
+        end
+      end
       
       describe '#read' do
-        
         it 'reads existing data' do
           heros = ['superman', 'batman', 'spiderman']
           superheros = Arel::Table.new :superheros
@@ -23,24 +43,6 @@ module Arc
             h.should be_a(Hash)
             heros.should include(h[:name])
           end
-        end       
-        
-      end
-      
-      describe '#create' do
-        it 'creates a new record' do
-          query = "SELECT * FROM superheros WHERE name = 'green hornet'"
-          result = ArcTest.store.read query
-          result.size.should == 0
-          
-          ArcTest.store.create "INSERT INTO superheros (name) VALUES('green hornet');"
-          ArcTest.store.read(query).size.should == 1
-                    
-        end
-        it 'returns the record with a populated primary key' do
-          result = ArcTest.store.create "INSERT INTO superheros (name) VALUES('green lantern')"
-          result[:id].should_not be_nil
-          result[:name].should == 'green lantern'
         end
       end
       
@@ -63,10 +65,16 @@ module Arc
           ArcTest.store.destroy "DELETE FROM superheros WHERE name = 'wussy'"
           batman = ArcTest.store.read query
           batman.should == []
+        end        
+      end
+      
+      describe '#tables' do
+        it 'returns an array of tables' do
+          ArcTest.store.tables.length.should == 1
+          ArcTest.store.tables[:superheros].should be_a(Table)
         end
-        
-      end     
-                  
+      end
+
     end
   end
 end
