@@ -1,5 +1,4 @@
 require 'bundler/setup'
-require 'arel'
 
 require 'q/resource_pool'
 require 'q/hash'
