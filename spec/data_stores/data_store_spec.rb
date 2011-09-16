@@ -9,6 +9,7 @@ module Arc
       after :all do
         ArcTest.drop_schema
       end
+      
       describe '#create' do
         it 'creates a new record' do
           query = "SELECT * FROM superheros WHERE name = 'green hornet'"
