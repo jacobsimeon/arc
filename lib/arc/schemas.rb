@@ -1,3 +1,5 @@
+require 'arc/schemas/schema_base'
+
 module Arc
   module Schemas
     extend Q::Dispatcher
