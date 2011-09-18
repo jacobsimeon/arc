@@ -35,8 +35,7 @@ module Arc
       describe '#read' do
         it 'reads existing data' do
           heros = ['superman', 'batman', 'spiderman']
-          superheros = Arel::Table.new :superheros
-          query = superheros.project('*')
+          query = "SELECT * FROM superheros"
           
           result = ArcTest.store.read query
           result.size.should == 3

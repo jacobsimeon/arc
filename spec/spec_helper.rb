@@ -1,8 +1,6 @@
 require 'bundler/setup'
 require 'rspec'
-require 'aruba'
 require 'arc'
-
 
 ENV['ARC_ENV'] ||= 'sqlite'
 module ArcTest
@@ -42,4 +40,3 @@ module ArcTest
     
   end
 end
-Arel::Table.engine = ArcTest.store
