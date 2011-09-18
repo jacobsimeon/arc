@@ -1,4 +1,5 @@
 require 'sqlite3'
+
 module Arc
   module DataStores
     class SqliteDataStore < AbstractDataStore
