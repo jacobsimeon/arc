@@ -1,41 +1,15 @@
 require 'spec_helper'
 
 module Arc
-  module DataStores
-    class FakeDataStore < AbstractDataStore; end
-    STORES[:fake] = FakeDataStore
-  end
-end
-
-module Arc
   describe DataStores do
-    describe '#[]' do
-      
-      it 'retrieves data store for the specified adapter' do
-        DataStores[:fake].should be(DataStores::FakeDataStore)        
-      end
-      
-      it 'tries to require data store adapter if not found' do
-        ->{ DataStores::SupermanDataStore }.should raise_error(NameError)
-        DataStores[:superman].should be(DataStores::SupermanDataStore)        
-      end
-      
-      it 'raises AdapterNotFoundError when the specified adapter does not exist' do
-        ->{ DataStores[:batman] }.should raise_error(DataStores::AdapterNotFoundError)
-      end
-    
+    it 'extends Q::Dispatcher' do
+      DataStores.should be_a(Q::Dispatcher)
     end
-    
-    describe '#create_store' do
-      it 'raises AdapterNotSpecified' do
-        ->{ DataStores.create_store({}) }.should raise_error(DataStores::AdapterNotSpecifiedError)
-      end
-
-      it 'creates and returns a new instance of the specified data store' do
-        store = DataStores.create_store ArcTest.config[:sqlite]
-        store.should be_a(DataStores::AbstractDataStore)  
-      end
-            
+    it "specifies 'DataStore' as the constant_suffix" do
+      DataStores.instance_variable_get(:@constant_suffix).should == "DataStore"
+    end
+    it "specifies 'arc/data_stores/%s_data_store' as the require_pattern" do
+      DataStores.instance_variable_get(:@require_pattern).should == "arc/data_stores/%s_data_store"
     end
   end  
 end
