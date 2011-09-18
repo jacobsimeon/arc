@@ -4,9 +4,9 @@ module Arc
   module DataStores
     describe AbstractDataStore do
       
-      it 'includes quoting module' do
-        ArcTest.store.class.included_modules.should include(Arc::Quoting)
-      end
+      # it 'includes quoting module' do
+      #   ArcTest.store.class.included_modules.should include(Arc::Quoting)
+      # end
       
       describe '#new' do
         it 'does not define connection creation' do
