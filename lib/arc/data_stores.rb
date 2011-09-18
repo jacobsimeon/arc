@@ -1,3 +1,5 @@
+require 'arc/data_stores/abstract_data_store'
+
 module Arc
   module DataStores
     extend Q::Dispatcher
