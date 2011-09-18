@@ -2,12 +2,22 @@ require 'bundler/setup'
 require 'rspec'
 require 'arc'
 
-ENV['ARC_ENV'] ||= 'sqlite'
 module ArcTest
   class << self
+    def config_key
+      (ENV['ARC_ENV'] ||= 'sqlite').to_sym
+    end
     
     def config
       @config ||= read_config.symbolize_keys!
+    end
+    
+    def current_config
+      config[config_key]
+    end
+    
+    def adapter
+      current_config[:adapter]
     end
     
     def config_file
@@ -19,7 +29,7 @@ module ArcTest
     end
     
     def load_schema
-      File.read("#{File.dirname __FILE__}/support/schemas/#{ENV['ARC_ENV']}.sql").split(';').each do |statement|
+      File.read("#{File.dirname __FILE__}/support/schemas/#{config_key}.sql").split(';').each do |statement|
         store.send :execute, statement
       end
     end
@@ -35,8 +45,9 @@ module ArcTest
     end
     
     def store
-      @store ||= Arc::DataStores.create_store config[ENV['ARC_ENV'].to_sym]
+      @store ||= Arc::DataStores[adapter.to_sym].new current_config
     end
     
   end
 end
+
