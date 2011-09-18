@@ -2,55 +2,57 @@ require 'spec_helper'
 
 module Arc
   module Schemas
-    describe SchemaBase do
-
-      class FakeSchema < SchemaBase
-        def fetch_table_names
-          [:superheros, :villains]
+    describe Schema do
+      before :each do 
+        schema = Schema.new nil, :superheros
+      end
+      it 'aliases item_names to table_names' do
+        schema = Schema.new nil, :superheros
+        schema.should respond_to(:table_names)
+      end
+      class Schema
+        describe Table do
+          it 'aliases item_names to column_names' do
+            table = Table.new nil, :superheros
+            table.should respond_to(:column_names)
+          end 
+          class Table
+            describe Column do
+              describe '#new' do
+                it 'sets the datastore' do
+                  c = Column.new ArcTest.store
+                  c.instance_variable_get(:@data_store).should be(ArcTest.store)
+                end
+                it "sets the column's name" do
+                  c = Column.new nil, :name => :superheros
+                  c.name.should == :superheros
+                end
+                it "sets the column's allows_null" do
+                  c = Column.new nil, :allows_null => false
+                  c.allows_null.should == false
+                end
+                it "sets the column's default value" do
+                  c = Column.new nil, :default => "superman"
+                  c.default.should == "superman"
+                end
+                it "sets the column's primary_key?" do
+                  c = Column.new nil, :primary_key => true
+                  c.pk?.should be_true
+                  c.primary_key?.should be_true
+                end
+                it "sets the string representation of the column's type" do
+                  c = Column.new nil, :type => "INTEGER"
+                  c.instance_variable_get(:@stype).should == "INTEGER"
+                end
+                it 'throws NotImplementedError when querying type' do
+                  c = Column.new nil
+                  ->{ c.type }.should raise_error(NotImplementedError)
+                end
+              end
+            end
+          end
         end
-        def fetch_table name
-          @table_cache ||= {
-            superheros: {
-              columns: []
-            },
-            villains: {
-              columns: [] 
-            }
-          }
-          @table_cache[name]
-        end      
-      end
-
-      before :each do
-        @schema = SchemaBase.new ArcTest.store
-        @fake_schema = FakeSchema.new ArcTest.store
-      end
-      
-      describe '#new' do
-        it 'sets the datastore' do
-          @schema.instance_variable_get(:@data_store).should == ArcTest.store
-        end
-      end
-      
-      it 'responds to #[]' do
-        @schema.should respond_to(:[])
-        @fake_schema[:superheros][:columns].should == []
-      end
-      
-      it 'responds to #table_names' do
-        @fake_schema.table_names.should == [:superheros, :villains]
-      end
-      
-      it 'responds to #fetch_table_names' do
-        @schema.should respond_to(:fetch_table_names)
-        ->{ @schema.fetch_table_names }.should raise_error(NotImplementedError)
-      end
-      
-      it 'responds to #fetch_table' do
-        @schema.should respond_to(:fetch_table)
-        ->{ @schema.fetch_table :not_a_table }.should raise_error(NotImplementedError)
       end
     end
-    
   end
 end

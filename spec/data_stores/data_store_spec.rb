@@ -10,6 +10,15 @@ module Arc
         ArcTest.drop_schema
       end
       
+      describe '#schema' do
+        it 'creates a schema object for the correct adapter' do
+          ArcTest.store.schema.should be_a(Arc::Schemas[ArcTest.adapter])
+        end
+        it 'passes a reference to -self- to the schema' do
+          ArcTest.store.schema.instance_variable_get(:@data_store).should be(ArcTest.store)
+        end
+      end
+      
       describe '#create' do
         it 'creates a new record' do
           query = "SELECT * FROM superheros WHERE name = 'green hornet'"
@@ -66,13 +75,6 @@ module Arc
           batman = ArcTest.store.read query
           batman.should == []
         end        
-      end
-      
-      describe '#tables' do
-        it 'returns an array of tables' do
-          ArcTest.store.tables.length.should == 1
-          ArcTest.store.tables[:superheros].should be_a(Table)
-        end
       end
 
     end

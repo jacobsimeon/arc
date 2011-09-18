@@ -1,4 +1,4 @@
-require 'arc/schemas/schema_base'
+require 'arc/schemas/schema'
 
 module Arc
   module Schemas
