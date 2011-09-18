@@ -1,4 +1,5 @@
 require 'bundler/setup'
+require 'time'
 
 require 'q/resource_pool'
 require 'q/hash'

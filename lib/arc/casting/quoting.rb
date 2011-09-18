@@ -3,7 +3,7 @@ require 'bigdecimal'
 
 module Arc
   module Quoting
-    #class CannotCastValueError < StandardError; end
+    class CannotCastValueError < StandardError; end
     # Quotes the column name. Defaults to no quoting.
     def quote_column_name(column_name)
       column_name
