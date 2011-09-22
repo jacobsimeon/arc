@@ -3,8 +3,8 @@ require 'spec_helper'
 module Arc
   module Schemas
     describe Schema do
-      before :each do 
-        schema = Schema.new nil, :superheros
+      it 'includes Collector' do
+        Schema.included_modules.should include(Collector)
       end
       it 'aliases item_names to table_names' do
         schema = Schema.new nil, :superheros
@@ -12,6 +12,9 @@ module Arc
       end
       class Schema
         describe Table do
+          it 'includes Collector' do
+            Table.included_modules.should include(Collector)
+          end
           it 'aliases item_names to column_names' do
             table = Table.new nil, :superheros
             table.should respond_to(:column_names)

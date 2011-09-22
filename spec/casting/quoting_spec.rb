@@ -5,8 +5,7 @@ module Arc
     describe '#quote' do
       def quoter
         @quoter ||= Class.new { include Quoting }.new
-      end
-      
+      end      
       it 'should throw an exception if it cannot find a convertible class' do
         ->{ quoter.quote(Class.new.new) }.should raise_error(Quoting::CannotCastValueError)
       end

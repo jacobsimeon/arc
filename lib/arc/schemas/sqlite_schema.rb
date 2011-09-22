@@ -2,7 +2,7 @@ module Arc
   module Schemas
     class SqliteSchema < Schema
           
-      def fetch_item_names
+      def fetch_keys
         # r = @data_store.read <<-SQL
         #   SELECT name FROM sqlite_master
         #   WHERE type='table';

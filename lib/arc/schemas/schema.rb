@@ -1,33 +1,13 @@
+require 'q/collector'
 module Arc
   module Schemas
-    
-    class SchemaObject
-      attr_reader :name
-      def initialize data_store, name=nil
-        @items = {}
-        @data_store = data_store
-        @name = name
-      end
-      def [] name
-        @items[name] ||= fetch_item(name)
-      end
-      def item_names
-        @names ||= fetch_item_names
-      end
-      def fetch_item_names
-        raise NotImplementedError
-      end
-      def fetch_item name
-        raise NotImplementedError
-      end
-    end
-    
-    
-    class Schema < SchemaObject
-      alias :table_names :item_names
+    class Schema# < SchemaObject
+      include Collector
+      alias :table_names :keys
 
-      class Table < SchemaObject
-        alias :column_names :item_names
+      class Table# < SchemaObject
+        include Collector
+        alias :column_names :keys
 
         class Column
           attr_reader :name
