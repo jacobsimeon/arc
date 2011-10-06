@@ -8,7 +8,7 @@ module Arc
       !!!!!!!!!!!!!!!!!!!!     
       
       def schema
-        @schema ||= Schemas[@config[:adapter]].new(self)
+        @schema ||= Schemas[@config[:adapter]].new self
       end
       
       def create query
@@ -31,12 +31,12 @@ module Arc
         raise NotImplementedError
       end
           
-      private      
       def execute query
         #adapters should override this method to execute a query against the database
         raise NotImplementedError
       end
-      
+
+      private
       #better semantics for a class that deals with 'connections' instead of 'resources'
       private :with_resource
       def create_connection; raise NotImplementedError; end

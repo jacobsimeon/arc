@@ -1,53 +1,51 @@
 require 'bundler/setup'
 require 'rspec'
 require 'arc'
+require 'q/resource_pool'
 
 module ArcTest
+  class StoreProvider < ResourcePool
+    def create_resource
+      Arc::DataStores[ArcTest.adapter].new ArcTest.current_config    
+    end
+  end  
+  
   class << self
     def config_key
-      (ENV['ARC_ENV'] ||= 'sqlite').to_sym
+      @config_key ||= (ENV['ARC_ENV'] ||= 'sqlite').to_sym
     end
     
     def config
-      @config ||= read_config.symbolize_keys!
+      @config ||= YAML::load(File.read "#{File.dirname __FILE__}/support/config.yml").symbolize_keys!
+    end
+    
+    def with_store
+      file_root = "#{File.dirname __FILE__}/support/schemas"
+      ddl = File.read "#{file_root}/#{config_key}.sql"
+      drop_ddl = File.read "#{file_root}/drop_#{config_key}.sql"
+      provider.with_resource do |store|
+        #store.schema.drop_schema
+        store.schema.execute_ddl ddl
+        yield store
+        store.schema.execute_ddl drop_ddl
+      end
     end
     
     def current_config
-      config[config_key]
+      @count ||= 0
+      db_name = "#{config[config_key][:database]}-#{@count}"
+      @count += 1
+      config[config_key].merge({ database: db_name })
     end
     
     def adapter
-      current_config[:adapter]
+      current_config[:adapter].to_sym
     end
     
-    def config_file
-      File.open "#{File.dirname __FILE__}/support/config.yml"
-    end
-    
-    def read_config
-      config = YAML::load config_file
-    end
-    
-    def load_schema
-      File.read("#{File.dirname __FILE__}/support/schemas/#{config_key}.sql").split(';').each do |statement|
-        store.send :execute, statement
-      end
-    end
-    
-    def drop_schema    
-      if config[ENV['ARC_ENV'].to_sym][:adapter] == 'sqlite'
-        File.delete config[ENV['ARC_ENV'].to_sym][:database] and return
-      end
-      drop_file = "#{File.dirname __FILE__}/support/schemas/drop_#{ENV['ARC_ENV']}.sql"
-      if File.exists? drop_file
-        store.send :execute, File.read(drop_file)
-      end
-    end
-    
-    def store
-      @store ||= Arc::DataStores[adapter.to_sym].new current_config
-    end
-    
+    private
+    def provider
+      @provider ||= StoreProvider.new nil
+    end    
   end
+  
 end
-

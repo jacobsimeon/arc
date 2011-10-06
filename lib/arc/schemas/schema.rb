@@ -5,6 +5,17 @@ module Arc
     class Schema
       include Collector
       alias :table_names :keys
+      def initialize store
+        @data_store = store
+      end
+      def execute_ddl ddl
+        case ddl
+        when Array
+          ddl.each { |s| @data_store.execute s }
+        when String
+          execute_ddl ddl.split(';')
+        end        
+      end
     end
     
     class Schema::Table
