@@ -3,6 +3,20 @@ require 'rspec'
 require 'arc'
 require 'q/resource_pool'
 
+
+RSpec.configure do |config|
+  config.before(:all) do
+    file_name = "tmp/sqlite.sqlite3-1"
+    File.delete file_name if File.exists? file_name    
+  end  
+  config.after(:all) do
+    file_name = "tmp/sqlite.sqlite3-1"
+    File.delete file_name if File.exists? file_name    
+  end
+end
+
+
+
 module ArcTest
   class StoreProvider < ResourcePool
     def create_resource

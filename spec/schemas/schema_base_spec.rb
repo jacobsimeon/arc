@@ -21,6 +21,14 @@ module Arc
             table = Table.new nil, :superheros
             table.should respond_to(:column_names)
           end
+          it 'has a name' do
+            Table.new('superheros').name.should == 'superheros'            
+          end
+          it 'sets the data store' do
+            ArcTest.with_store do |store|
+              Table.new('superheros', store).instance_variable_get(:data_store).should be(store)
+            end         
+          end
         end
       end
       

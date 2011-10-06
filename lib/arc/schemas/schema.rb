@@ -21,11 +21,15 @@ module Arc
     class Schema::Table
       include Collector
       alias :column_names :keys
+      attr_reader :name
+      
+      def initialize name, store=nil
+        @name, @data_store = name.to_s, store
+      end
     end
     
     class Schema::Table::Column
       attr_reader :name
-      attr_reader :allows_null
       attr_reader :default
       def initialize store, properties={}
         @data_store = store
@@ -39,6 +43,9 @@ module Arc
       alias :primary_key? :pk?
       def type
         raise NotImplementedError
+      end
+      def allows_null?
+        @allows_null
       end
     end
     
