@@ -5,12 +5,12 @@ module Arc
   module Quoting
     class CannotCastValueError < StandardError; end
     # Quotes the column name. Defaults to no quoting.
-    def quote_column_name(column_name)
+    def quote_column(column_name)
       column_name
     end
 
     # Quotes the table name. Defaults to column name quoting.
-    def quote_table_name(table_name)
+    def quote_table(table_name)
       quote_column_name(table_name)
     end
           
