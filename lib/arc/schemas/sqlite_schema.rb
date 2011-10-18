@@ -4,7 +4,7 @@ module Arc
       def fetch_keys
         r = @data_store.read <<-SQL
           SELECT name FROM sqlite_master
-          WHERE type='table';
+          WHERE type='table' AND name != 'sqlite_sequence';
         SQL
         r.map{ |t| t[:name].to_sym }
       end
