@@ -11,6 +11,10 @@ module Arc
         @schema ||= Schemas[@config[:adapter]].new self
       end
       
+      def [] table
+        schema[table]
+      end
+      
       def create query
         #add new data
         raise NotImplementedError

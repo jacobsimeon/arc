@@ -4,6 +4,14 @@ module Arc
   module DataStores
     describe AbstractDataStore do
       
+      it 'proxies methods to the schema' do
+        store = AbstractDataStore.new({})
+        schema = Schemas::Schema.new(store)
+        schema.stub(:[]).and_return(Schemas::Schema::Table.new :fake_table)
+        store.stub!(:schema).and_return(schema)
+        store[:fake_table].should be_a(Schemas::Schema::Table)        
+      end
+      
       # it 'includes quoting module' do
       #   ArcTest.store.class.included_modules.should include(Arc::Quoting)
       # end
