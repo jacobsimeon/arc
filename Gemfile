@@ -1,9 +1,13 @@
 source "http://rubygems.org"
 
 gem 'q', :path => '~/Projects/jacobsimeon/q'
-group :development do
-	gem 'rspec'
-	gem 'sqlite3'
+
+group :test do
+  gem 'rspec'
+  gem 'sqlite3'
+  gem 'simplecov', '>= 0.4.0', :require => false
 end
+
+
 
 gemspec
