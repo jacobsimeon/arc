@@ -20,7 +20,7 @@ module Arc
           id.default.should be_nil
           id.name.should == "id"
           id.type.should == :integer
-          
+
           #name column
           name = heros[:name]
           name.should be_a(Schema::Table::Column)
