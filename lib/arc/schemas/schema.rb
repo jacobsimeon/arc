@@ -11,7 +11,7 @@ module Arc
       def execute_ddl ddl
         case ddl
         when Array
-          ddl.each { |s| @data_store.execute s }
+          ddl.each { |s| @data_store.execute s }            
         when String
           execute_ddl ddl.split(';')
         end        
