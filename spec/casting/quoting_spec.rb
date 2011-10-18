@@ -5,7 +5,15 @@ module Arc
     describe '#quote' do
       def quoter
         @quoter ||= Class.new { include Quoting }.new
-      end      
+      end
+      it 'quotes a column name' do
+        quoter.quote_column('my_column').should == 'my_column'
+      end
+      it 'quotes a table name' do
+        t = 'my_table'
+        quoter.should_receive(:quote_column_name).with(t)
+        quoter.quote_table(t)
+      end
       it 'should throw an exception if it cannot find a convertible class' do
         ->{ quoter.quote(Class.new.new) }.should raise_error(Quoting::CannotCastValueError)
       end
