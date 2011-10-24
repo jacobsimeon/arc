@@ -5,6 +5,7 @@ SimpleCov.start
 require 'bundler/setup'
 require 'rspec'
 require 'arc'
+require 'arel'
 require 'q/resource_pool'
 
 
