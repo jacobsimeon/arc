@@ -24,7 +24,7 @@ module Arc
         raw_column_data.map { |c| c[:name].to_sym }
       end
       def fetch_item column_name
-        c = raw_column_data.select {|c| c[:name] == column_name.to_s }.first
+        c = raw_column_data.select {|c| c[:name] == column_name.to_s }.first || {}
         c = {
           name: c[:name],
           allows_null: c[:notnull] == 0,

@@ -12,14 +12,22 @@ module Arc
         store[:fake_table].should be_a(Schemas::Schema::Table)        
       end
       
-      # it 'includes quoting module' do
-      #   ArcTest.store.class.included_modules.should include(Arc::Quoting)
-      # end
+      it 'includes arel compatibility' do
+        ArcTest.with_store do |store|
+          store.class.included_modules.should include(ArelCompatibility)
+        end
+      end
+      
+      it 'includes quoting module' do
+        ArcTest.with_store do |store|
+          store.class.included_modules.should include(Arc::Quoting)
+        end
+      end
       
       describe '#new' do
         it 'does not define connection creation' do
-          store = AbstractDataStore.new ArcTest.config[:empty]
-          ->{ store.send :with_connection }.should raise_error(NotImplementedError)
+          store = AbstractDataStore.new ArcTest.config[:sqlite]
+          ->{ store.send :with_store }.should raise_error(NotImplementedError)
         end
       end
       describe 'abstract methods throw NotImplementedError' do

@@ -7,7 +7,7 @@ module Arc
         @quoter ||= Class.new { include Quoting }.new
       end
       it 'quotes a column name' do
-        quoter.quote_column('my_column').should == 'my_column'
+        quoter.quote_column('my_column').should == '"my_column"'
       end
       it 'quotes a table name' do
         t = 'my_table'
@@ -41,7 +41,8 @@ module Arc
       it 'quotes a fixnum' do
         fixnum = 10
         quoter.quote(fixnum).should == fixnum.to_s
-        quoter.quote(fixnum.to_s, Fixnum).should == fixnum.to_s          
+        quoter.quote(fixnum.to_s, Fixnum).should == fixnum.to_s
+        quoter.quote(fixnum.to_s, nil)
       end
       it 'quotes a bignum' do
         bignum = 1<<100
@@ -52,6 +53,23 @@ module Arc
         float = 1.2
         quoter.quote(float).should == float.to_s
         quoter.quote(float, Float).should == float.to_s
+      end
+      it 'quotes a class name' do
+        klass = String
+        quoter.quote(klass).should == "'String'"
+      end
+      it 'quotes boolean values' do
+        quoter.quote(true, :boolean).should == "'t'"
+        quoter.quote(false, :boolean).should == "'f'"
+      end
+      it 'quotes an object based on column type' do
+        superman = "superman"
+        ArcTest.with_store do |store|
+          c = store[:superheros][:name]
+          quoter.quote(superman, c).should == "'superman'"
+          c = store[:superheros][:id]
+          quoter.quote(10, c).should == '10'
+        end
       end
       it 'quotes a bigdecimal' do
         big_decimal = BigDecimal.new((1 << 100).to_s)

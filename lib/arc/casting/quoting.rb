@@ -6,19 +6,29 @@ module Arc
     class CannotCastValueError < StandardError; end
     # Quotes the column name. Defaults to no quoting.
     def quote_column(column_name)
-      column_name
+      "\"#{column_name}\""
     end
-
+    alias :quote_column_name :quote_column
+    
     # Quotes the table name. Defaults to column name quoting.
     def quote_table(table_name)
       quote_column_name(table_name)
     end
+    alias :quote_table_name :quote_table
           
     def quote(value, klass=value.class)
+      return quote_nil if (value.nil?)
+      klass = value.class if klass.nil?
+      if value.is_a? Class
+        return quote_string value.name
+      end
       case klass
       when String, Symbol
         method = "quote_#{klass.to_s}"
         return send method, value if respond_to? method, :include_private => true
+      when Arc::Schemas::Schema::Table::Column
+        method = "quote_#{Arc::Casting::TYPES[klass.type.to_sym]}"
+        return send(method, value)
       else
         while klass.name do
           method = "quote_#{klass.name.downcase.gsub(/class/,'')}"
@@ -41,6 +51,9 @@ module Arc
     def quote_true value=true
       quote_string 't'
     end
+    def quote_boolean value
+      value ? quote_true : quote_false
+    end
     def quote_false value=false
       quote_string 'f'
     end
@@ -54,6 +67,9 @@ module Arc
     end
     def quote_numeric value
       value.to_s
+    end
+    def quote_integer value
+      quote_numeric value.to_i
     end
     def quote_bigdecimal value
       return value if value.is_a? String

@@ -1,11 +1,9 @@
+require 'arc/data_stores/arel_compatibility'
 module Arc
   module DataStores
     class AbstractDataStore < ResourcePool
-
-      !!!!!!!!!!!!!!!!!!!!
-        #include Quoting
-        #include Casting
-      !!!!!!!!!!!!!!!!!!!!     
+      include ArelCompatibility
+      include Quoting
       
       def schema
         @schema ||= Schemas[@config[:adapter]].new self
@@ -39,14 +37,16 @@ module Arc
         #adapters should override this method to execute a query against the database
         raise NotImplementedError
       end
-
+      alias :with_store :with_resource
+      alias :columns :[]
       private
       #better semantics for a class that deals with 'connections' instead of 'resources'
-      private :with_resource
-      def create_connection; raise NotImplementedError; end
-      def create_resource; create_connection; end
-      alias :connection :resource
-      alias :with_connection :with_resource
+      def create_connection
+        raise NotImplementedError
+      end
+      def create_resource
+        create_connection
+      end
     end
   end
 end

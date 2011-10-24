@@ -1,5 +1,4 @@
 require 'sqlite3'
-
 module Arc
   module DataStores
     class SqliteDataStore < AbstractDataStore
@@ -23,7 +22,7 @@ module Arc
       end
 
       def execute query
-        with_connection do |connection|
+        with_store do |connection|
           result = connection.execute(query)
         end
       end
