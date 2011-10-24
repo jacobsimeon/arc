@@ -12,6 +12,9 @@ namespace :test do
     ENV['ARC_ENV'] = args.env
     system 'rspec spec/data_stores/data_store_spec.rb'    
   end
+  task :report do
+    `rspec spec -f h > notes/spec.html`
+  end
 end
 
 #example use of passing arguments to rake
