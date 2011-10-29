@@ -1,0 +1,10 @@
+# Configurations for various database connections used in specs
+#dummy config for use when a connection to an actual database is not necessary for the spec
+sqlite:
+  database: 'tmp/sqlite.sqlite3'
+  adapter: sqlite
+
+postgres:
+  database: arc_development
+  adapter: postgres
+  user: jacob
