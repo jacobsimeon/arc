@@ -10,7 +10,7 @@ end
 namespace :test do
   task :adapter, :env do |task, args|
     ENV['ARC_ENV'] = args.env
-    system 'rspec spec/data_stores/data_store_spec.rb'    
+    system 'rspec spec/data_stores/data_store_spec.rb spec/schemas/schema_spec.rb'
   end
   task :report do
     `rspec spec -f h > notes/spec.html`
