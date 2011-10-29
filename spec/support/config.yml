@@ -3,3 +3,8 @@
 sqlite:
   database: 'tmp/sqlite.sqlite3'
   adapter: sqlite
+
+postgres:
+  database: arc_development
+  adapter: postgres
+  user: jacob
