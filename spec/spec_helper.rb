@@ -63,10 +63,7 @@ module ArcTest
     end
     
     def current_config
-      @count ||= 0
-      db_name = "#{config[config_key][:database]}-#{@count}"
-      @count += 1
-      config[config_key].merge({ database: db_name })
+      config[config_key]
     end
     
     def adapter
