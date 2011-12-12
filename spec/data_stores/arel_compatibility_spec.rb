@@ -2,28 +2,15 @@ require 'spec_helper'
 
 module Arc
   module DataStores
-    # class FakeStore
-    #   include ArelCompatibility
-    #   include Quoting
-    #   def config
-    #     {:adapter => 'sqlite' }
-    #   end
-    #   def execute sql
-    #     executed.push sql
-    #   end
-    #   def executed
-    #     @executed ||= []
-    #   end
-    # end
     describe ArelCompatibility do
       it '#specifies which arel visitor to use' do
         ArcTest.with_store do |s|
-          s.visitor.should be_a(Arel::Visitors::SQLite)
+          Arel::Visitors.for s
         end
       end      
       it '#responds to #connection_pool#spec#config' do
         ArcTest.with_store do |s|
-          s.connection_pool.spec.config[:adapter].should == 'sqlite'
+          s.connection_pool.spec.config[:adapter].should == ArcTest.config_key.to_s
         end
       end
       it 'responds to #with_connection and yields an object which has an execute method' do
