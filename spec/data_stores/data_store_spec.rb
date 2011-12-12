@@ -65,9 +65,10 @@ module Arc
             query = "UPDATE superheros SET name = 'wussy' WHERE name = 'batman'"
             result = store.update query
             batman = store.read "SELECT * from superheros WHERE name = 'batman'"
-            batman.should == []
+            batman.size.should == 0
+            batman.should be_a(Enumerable)
             batman = store.read "SELECT * from superheros WHERE name = 'wussy'"
-            batman[0][:name].should == 'wussy'
+            batman.first[:name].should == 'wussy'
           end
         end
       end
@@ -77,10 +78,11 @@ module Arc
           ArcTest.with_store do |store|
             query = "SELECT * FROM superheros WHERE name = 'batman'"
             batman = store.read query
-            batman[0][:name].should == 'batman'
+            batman.first[:name].should == 'batman'
             store.destroy "DELETE FROM superheros WHERE name = 'batman'"
             batman = store.read query
-            batman.should == []
+            batman.size.should == 0
+            batman.should be_a(Enumerable)
           end
         end        
       end
