@@ -7,4 +7,10 @@ sqlite:
 postgres:
   database: arc_development
   adapter: postgres
+  host: localhost
   user: jacob
+
+mysql:
+  database: arc_development
+  adapter: mysql
+  username: root
