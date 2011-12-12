@@ -1,11 +1,18 @@
 require 'bundler/gem_tasks'
 task :test do
-  ['sqlite', 'mysql'].each do |environment|
+  ['sqlite', 'postgres', 'mysql'].each do |environment|
     puts "Running tests for environment #{environment}"
     ENV['ARC_ENV'] = environment
     system 'rspec spec'
   end
 end
+
+task :setup do
+  #setup postgres
+  `createdb arc_development -O jacob`
+  puts "Setup complete"
+end
+
 
 namespace :test do
   task :adapter, :env do |task, args|
