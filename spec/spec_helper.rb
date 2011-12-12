@@ -16,6 +16,8 @@ RSpec.configure do |config|
 end
 
 module ArcTest
+  DEFAULT_ADAPTER = 'sqlite'
+  
   class StoreProvider < ResourcePool
     def create_resource
       Arc::DataStores[ArcTest.adapter].new ArcTest.current_config    
@@ -25,7 +27,7 @@ module ArcTest
   class << self
 
     def config_key
-      @config_key ||= (ENV['ARC_ENV'] ||= 'sqlite').to_sym
+      @config_key ||= (ENV['ARC_ENV'] ||= ArcTest::DEFAULT_ADAPTER).to_sym
     end    
     
     def file_root
@@ -73,7 +75,7 @@ module ArcTest
     private
     def provider
       @provider ||= StoreProvider.new nil
-    end    
+    end
   end
-  
+
 end
