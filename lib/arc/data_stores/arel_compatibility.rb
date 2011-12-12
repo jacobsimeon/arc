@@ -1,4 +1,12 @@
 require 'yaml'
+require 'arel'
+
+module Arel
+  module Visitors
+    VISITORS['postgres'] = VISITORS['postgresql']
+  end
+end
+
 module Arc
   module DataStores
     module ArelCompatibility
