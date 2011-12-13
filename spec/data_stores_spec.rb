@@ -9,7 +9,7 @@ module Arc
       DataStores.instance_variable_get(:@constant_suffix).should == "DataStore"
     end
     it "specifies 'arc/data_stores/%s_data_store' as the require_pattern" do
-      DataStores.instance_variable_get(:@require_pattern).should == "arc/data_stores/%s_data_store"
+      DataStores.instance_variable_get(:@require_pattern).should == "arc/data_stores/%s/store.rb"
     end
   end  
 end

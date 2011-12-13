@@ -2,21 +2,8 @@ require 'spec_helper'
 
 module Arc
   module DataStores
-    describe 'The data store crud operations' do      
-      
-      describe '#schema' do
-        it 'creates a schema object for the correct adapter' do
-          ArcTest.with_store do |store|
-            store.schema.should be_a(Arc::Schemas[ArcTest.adapter])
-          end
-        end
-        it 'passes a reference to -self- to the schema' do
-          ArcTest.with_store do |store|
-            store.schema.instance_variable_get(:@data_store).should be(store)
-          end
-        end
-      end
-      
+    describe 'The data store crud operations' do
+            
       describe '#create' do
         it 'creates a new record' do
           ArcTest.with_store do |store|

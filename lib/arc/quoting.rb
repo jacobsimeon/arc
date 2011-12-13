@@ -26,7 +26,7 @@ module Arc
       when String, Symbol
         method = "quote_#{klass.to_s}"
         return send method, value if respond_to? method, :include_private => true
-      when Arc::Schemas::Schema::Table::Column
+      when Arc::DataStores::ObjectDefinitions::Column
         method = "quote_#{Arc::Casting::TYPES[klass.type.to_sym]}"
         return send(method, value)
       else

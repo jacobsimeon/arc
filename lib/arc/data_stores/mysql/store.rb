@@ -1,4 +1,6 @@
 require 'mysql2'
+require 'arc/data_stores/mysql/object_definitions'
+
 Mysql2::Client.default_query_options.merge!({
   :symbolize_keys => true
 })
@@ -28,6 +30,10 @@ module Arc::DataStores
       with_store do |store|
         store.query query
       end
+    end
+    
+    def schema
+      @schema ||= ObjectDefinitions::MysqlSchema.new self
     end
     
     private

@@ -11,9 +11,9 @@ module Arc
       it 'proxies methods to the schema' do
         store = AbstractDataStore.new({})
         schema = ObjectDefinitions::Schema.new(store)
-        schema.stub(:[]).and_return(ObjectDefinitions::Schema::Table.new :fake_table)
+        schema.stub(:[]).and_return(ObjectDefinitions::Table.new :fake_table)
         store.stub!(:schema).and_return(schema)
-        store[:fake_table].should be_a(ObjectDefinitions::Schema::Table)
+        store[:fake_table].should be_a(ObjectDefinitions::Table)
       end
       
       it 'includes arel compatibility' do
@@ -30,6 +30,7 @@ module Arc
           ->{ store.send :with_store }.should raise_error(NotImplementedError)
         end
       end
+    
       describe 'abstract methods throw NotImplementedError' do
         it '#schema raises not implemented error' do
           ->{ @store.schema }.should raise_error(NotImplementedError)
@@ -50,6 +51,7 @@ module Arc
           ->{ @store.execute @rquery }.should raise_error(NotImplementedError)          
         end
       end
+      
     end
   end
 end

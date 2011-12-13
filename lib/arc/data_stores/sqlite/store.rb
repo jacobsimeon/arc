@@ -1,4 +1,6 @@
 require 'sqlite3'
+require 'arc/data_stores/sqlite/object_definitions'
+
 module Arc
   module DataStores
     class SqliteDataStore < AbstractDataStore
@@ -25,6 +27,10 @@ module Arc
         with_store do |connection|
           result = connection.execute(query)
         end
+      end
+      
+      def schema
+        @schema ||= ObjectDefinitions::SqliteSchema.new self
       end
       
       private

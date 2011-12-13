@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'arc/casting'
 
 module Arc
   describe Casting do
