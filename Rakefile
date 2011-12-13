@@ -19,8 +19,8 @@ namespace :test do
     ENV['ARC_ENV'] = args.env
     system 'rspec spec/data_stores/data_store_spec.rb spec/schemas/schema_spec.rb'
   end
-  task :report do
-    `rspec spec -f h > notes/spec.html`
+  task :docs do
+    `rspec spec -f h > doc/spec.html`
   end
 end
 
