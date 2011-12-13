@@ -6,4 +6,4 @@ pkg/*
 .rvmrc
 tmp/
 /coverage
-/notes/spec.html
+doc/spec.html
