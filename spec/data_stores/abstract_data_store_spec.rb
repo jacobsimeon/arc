@@ -3,25 +3,25 @@ require 'spec_helper'
 module Arc
   module DataStores
     describe AbstractDataStore do
+      before :each do
+        @store = AbstractDataStore.new ArcTest.config[:empty]
+        @query = "omg"
+      end
       
       it 'proxies methods to the schema' do
         store = AbstractDataStore.new({})
-        schema = Schemas::Schema.new(store)
-        schema.stub(:[]).and_return(Schemas::Schema::Table.new :fake_table)
+        schema = ObjectDefinitions::Schema.new(store)
+        schema.stub(:[]).and_return(ObjectDefinitions::Schema::Table.new :fake_table)
         store.stub!(:schema).and_return(schema)
-        store[:fake_table].should be_a(Schemas::Schema::Table)        
+        store[:fake_table].should be_a(ObjectDefinitions::Schema::Table)
       end
       
       it 'includes arel compatibility' do
-        ArcTest.with_store do |store|
-          store.class.included_modules.should include(ArelCompatibility)
-        end
+        @store.should be_a(ArelCompatibility)
       end
       
       it 'includes quoting module' do
-        ArcTest.with_store do |store|
-          store.class.included_modules.should include(Arc::Quoting)
-        end
+        @store.should be_a(Arc::Quoting)
       end
       
       describe '#new' do
@@ -31,9 +31,8 @@ module Arc
         end
       end
       describe 'abstract methods throw NotImplementedError' do
-        before :each do
-          @store = AbstractDataStore.new ArcTest.config[:empty]
-          @query = "omg"
+        it '#schema raises not implemented error' do
+          ->{ @store.schema }.should raise_error(NotImplementedError)
         end
         it '#create raises not implemented error' do
           ->{ @store.create @query }.should raise_error(NotImplementedError)

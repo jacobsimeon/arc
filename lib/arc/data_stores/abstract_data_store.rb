@@ -1,16 +1,19 @@
 require 'arc/data_stores/arel_compatibility'
+require 'arc/quoting'
+require 'arc/data_stores/object_definitions'
+
 module Arc
   module DataStores
     class AbstractDataStore < ResourcePool
       include ArelCompatibility
-      include Quoting
-      
-      def schema
-        @schema ||= Schemas[@config[:adapter]].new self
-      end
-      
+      include Arc::Quoting
+            
       def [] table
         schema[table]
+      end
+
+      def schema
+        raise NotImplementedError
       end
       
       def create query
