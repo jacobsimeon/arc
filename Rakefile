@@ -13,7 +13,6 @@ task :setup do
   puts "Setup complete"
 end
 
-
 namespace :test do
   task :adapter, :env do |task, args|
     ENV['ARC_ENV'] = args.env

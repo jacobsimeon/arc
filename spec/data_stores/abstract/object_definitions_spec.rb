@@ -37,7 +37,7 @@ module Arc
           end
         end
 
-        describe "Schema::Table::Column#new" do
+        describe "Column#new" do
           it 'sets the datastore' do
             c = Column.new @store
             c.instance_variable_get(:@data_store).should be(@store)
