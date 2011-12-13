@@ -3,7 +3,7 @@ module Arc
     class MysqlSchema < Schema
       def fetch_keys
         @data_store.read("SHOW TABLES").map do |r|
-          r[:Tables_in_arc_development].to_sym
+          r[r.keys.first].to_sym
         end
       end
       
