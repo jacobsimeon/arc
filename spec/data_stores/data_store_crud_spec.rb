@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Arc
   module DataStores
-    describe 'The data store' do      
+    describe 'The data store crud operations' do      
       
       describe '#schema' do
         it 'creates a schema object for the correct adapter' do
