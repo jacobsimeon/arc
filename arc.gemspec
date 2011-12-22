@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Jacob Morris"]
   s.email       = ["jacob.s.morris@gmail.com"]
   s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.summary     = %q{A lightweight driver for multiple sql backends}
+  s.description = %q{Compatible with mysql, sqlite, and postgres}
 
   s.rubyforge_project = "arc"
   
@@ -17,4 +17,14 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
+  
+  s.add_dependency 'agent-q'
+  s.add_dependency 'arel'
+  
+  s.add_development_dependency 'pg'
+  s.add_development_dependency 'sqlite3'
+  s.add_development_dependency 'mysql2'
+  s.add_development_dependency 'rspec'
+  s.add_development_dependency 'simplecov'
+  s.add_development_dependency 'ruby-debug'  
 end

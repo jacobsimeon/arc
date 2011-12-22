@@ -13,6 +13,21 @@ task :setup do
   puts "Setup complete"
 end
 
+task :publish do
+  require './lib/arc/version'
+  package = "arc-#{Arc::VERSION}.gem"
+  package_path = File.join(File.expand_path("pkg", Dir.pwd), package)
+  if File.exists? package_path
+    system "gem push #{package_path}"
+  else
+    puts "gem package \"#{package_path}\" does not exist."
+  end
+end
+
+task :yank do
+  system "gem yank arc"
+end
+
 namespace :test do
   task :adapter, :env do |task, args|
     ENV['ARC_ENV'] = args.env
