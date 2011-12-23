@@ -13,11 +13,24 @@ module Arc
         def fetch_item name
           MysqlTable.new name, @data_store
         end
+        
+        def execute_ddl ddl
+          case ddl
+          when Array
+            ddl = ddl.select do |stmt|
+              !stmt.nil? && !stmt.empty? && !stmt == "\n"
+            end
+            ddl.each { |s| @data_store.execute "#{s}" }
+          when String
+            execute_ddl ddl.split(';')
+          end        
+        end
+        
       end
     
       class MysqlTable < Table
         def raw_column_data
-          @data_store.read("SHOW FULL FIELDS FROM superheros").each do |r|
+          @data_store.read("show fields from #{self.name}").each do |r|
             r
           end
         end
@@ -25,8 +38,8 @@ module Arc
           raw_column_data.map {|c| c[:Field].to_sym }
         end
         def fetch_item name
-          return {} unless keys.include? name.to_sym
           c = raw_column_data.find{|c| c[:Field] == name.to_s}
+          throw "Column '#{name}' does not exist" unless keys.include? name.to_sym
           MysqlColumn.new @data_store,{
             name: c[:Field],
             allows_null: c[:Null] == "YES",
@@ -42,6 +55,7 @@ module Arc
           :int => :integer,
         }
         def type
+          @stype ||= ''
           @type ||= begin
             type_key = @stype.downcase.gsub(/\([\d,]*\)/, '').to_sym
             TYPES[type_key] || type_key
