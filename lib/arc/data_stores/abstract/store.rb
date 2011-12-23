@@ -1,6 +1,7 @@
 require 'arc/data_stores/abstract/arel_compatibility'
 require 'arc/data_stores/abstract/object_definitions'
 require 'arc/quoting'
+require 'arc/casting'
 
 module Arc
   module DataStores
