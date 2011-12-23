@@ -6,7 +6,9 @@ module Arc
       describe "All the Schemas!" do
         it 'lists the table names' do
           ArcTest.with_store do |store|
-            store.schema.table_names.should == [:superheros]
+            [:superheros, :powers, :superheros_powers].each do |t|
+              store.schema.table_names.should include(t)
+            end
           end
         end
       

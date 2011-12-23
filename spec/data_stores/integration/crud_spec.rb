@@ -1,76 +1,93 @@
 require 'spec_helper'
-
+require 'pp'
 module Arc
   module DataStores
     describe 'The data store crud operations' do
-            
-      describe '#create' do
-        it 'creates a new record' do
-          ArcTest.with_store do |store|
-            query = "SELECT * FROM superheros WHERE name = 'green hornet'"
-            result = store.read query
-            result.size.should == 0
-          
-            store.create "INSERT INTO superheros (name) VALUES('green hornet');"
-            store.read(query).size.should == 1
-          
-            #cleanup
-            store.destroy "DELETE FROM superheros where name = 'green hornet'"
-          end
-        end
-        
-        it 'returns the record with a populated primary key' do
-          ArcTest.with_store do |store|
-            result = store.create "INSERT INTO superheros (name) VALUES('green lantern')"
-            result[:id].should_not be_nil
-            result[:name].should == 'green lantern'
-            #cleanup
-            store.destroy "DELETE FROM superheros where name = 'green lantern'"
-          end
+      #convenience method for building a tree of arel values
+      def values_array table_name, hash
+        hash.keys.map do |attr|
+          [@tables[table_name][attr], hash[attr]]
         end
       end
       
-      describe '#read' do
-        it 'reads existing data' do
-          heros = ['superman', 'batman', 'spiderman']
-          query = "SELECT * FROM superheros"
-          
-          ArcTest.with_store do |store|
-            result = store.read query
-            result.size.should == 3
-            result.each do |h| 
-              h.should be_a(Hash)
-              heros.should include(h[:name])
-            end
-          end
+      #grab a superhero record by name
+      def get_hero(hero_name)
+        query = @tables[:superheros]
+          .project('*')
+          .where(@tables[:superheros][:name].eq(hero_name))
+          .to_sql
+        @store.read query
+      end
+      
+      before :each do
+        ArcTest.with_store do |store|          
+          Arel::Table.engine = store
+          load "spec/support/seed.rb"
         end
+        @tables = Hash.new { |hash, key| hash[key] = Arel::Table.new key }
+        @store = Arel::Table.engine
+      end
+      
+      describe '#create and #read'  do
+        before :each do
+          properties = {
+            :name => "green hornet",
+            :born_on => Time.now,
+            :photo => "hello",
+            :created_at => Time.now 
+          }
+          im = Arel::InsertManager.new Arel::Table.engine
+          im.insert values_array(:superheros, properties)
+          @result = @store.create im.to_sql
+        end
+        
+        it 'creates a new record' do
+          query = @tables[:superheros]
+            .project('*')
+            .where(@tables[:superheros][:name].eq('green hornet'))
+            .to_sql
+          result = @store.read query
+          result[0][:name].should == 'green hornet'
+        end
+        
+        it 'returns the record with a populated primary key' do
+          @result[:id].should_not be_nil
+          @result[:name].should == 'green hornet'
+        end
+        
       end
       
       describe '#update' do
         it 'updates a record and returns the updated record' do
-          ArcTest.with_store do |store|
-            query = "UPDATE superheros SET name = 'wussy' WHERE name = 'batman'"
-            result = store.update query
-            batman = store.read "SELECT * from superheros WHERE name = 'batman'"
-            batman.size.should == 0
-            batman.should be_a(Enumerable)
-            batman = store.read "SELECT * from superheros WHERE name = 'wussy'"
-            batman.first[:name].should == 'wussy'
-          end
+          properties = {:name => 'batman'}
+          um = Arel::UpdateManager.new @store
+          um.table @tables[:superheros]
+          um.set(values_array(:superheros, properties))
+            .where(@tables[:superheros][:name].eq('megaman'))
+          query = um.to_sql
+          result = @store.update query
+          
+          megaman = get_hero('megaman')
+          megaman.size.should == 0
+          megaman.should be_a(Enumerable)
+          
+          batman = get_hero('batman')
+          batman.size.should == 1
+          batman.first[:name].should == 'batman'
         end
       end
       
       describe '#destroy' do
         it 'deletes a record' do 
-          ArcTest.with_store do |store|
-            query = "SELECT * FROM superheros WHERE name = 'batman'"
-            batman = store.read query
-            batman.first[:name].should == 'batman'
-            store.destroy "DELETE FROM superheros WHERE name = 'batman'"
-            batman = store.read query
-            batman.size.should == 0
-            batman.should be_a(Enumerable)
-          end
+          delete = Arel::DeleteManager.new @store
+          delete
+            .from(@tables[:superheros])
+            .where(@tables[:superheros][:name].eq('superman'))
+          @store.destroy delete.to_sql
+          superman = get_hero('superman')
+          superman.size.should == 0
+          superman.size.should == 0
+          superman.should be_a(Enumerable)
         end        
       end
 
