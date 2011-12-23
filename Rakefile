@@ -36,6 +36,9 @@ namespace :test do
   task :docs do
     `rspec spec -f h > doc/spec.html`
   end
+  task :wip do
+    system "rspec spec --tag wip"
+  end
 end
 
 #example use of passing arguments to rake
