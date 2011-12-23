@@ -60,7 +60,7 @@ module Arc
       class PostgresColumn < Column
         def type
           return :varchar if @stype =~ /character varying/
-          return :time if @stype =~ /timestamp/
+          return :time if @stype =~ /time/
           @stype.to_sym
         end
       end
