@@ -26,6 +26,9 @@ module Arc
         quoter.quote("'").should == "''''"
         quoter.quote("my%String", String).should == "'my%String'"
       end
+      it 'quotes text' do
+        quoter.quote("hello world", "text").should == "'hello world'"
+      end
       it 'quotes a date object' do
         date = Date.today
         fmt = '%Y-%m-%d'
