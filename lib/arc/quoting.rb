@@ -87,5 +87,6 @@ module Arc
       end
       quote_string value        
     end
+    alias :quote_text :quote_string
   end
 end
