@@ -15,6 +15,8 @@ module Arc
       boolean:  'boolean', 
       bit:      'boolean',
       float:    'float'  ,
+      text:     'string' ,
+      bytea:    'binary' ,
     }
     
     CAST_METHODS = Hash.new do |cast_methods, key|
