@@ -9,7 +9,7 @@ module Arc::DataStores
   class MysqlDataStore < AbstractDataStore
     
     def read query
-      execute(query)
+      execute(query).entries
     end
     
     def create sql
@@ -25,6 +25,11 @@ module Arc::DataStores
     def destroy sql
       execute sql
     end
+    
+    def quote_column_name table
+      "`#{table}`"
+    end
+    alias :quote_column :quote_column_name
 
     def execute query
       with_store do |store|
