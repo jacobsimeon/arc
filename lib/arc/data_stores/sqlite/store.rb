@@ -6,7 +6,12 @@ module Arc
     class SqliteDataStore < AbstractDataStore
       
       def read query
-        execute(query).symbolize_keys!
+        case query
+        when String
+          execute(query).symbolize_keys!
+        when Arel::SelectManager
+          result_for query
+        end
       end
       
       def create sql
