@@ -36,10 +36,14 @@ module Arc
         quoter.quote(date.strftime(fmt), Date).should == "'#{date.strftime fmt}'"
       end
       it 'quotes a time object' do
-        time = Time.now
-        fmt = '%Y-%m-%d %H:%M:%S'
-        quoter.quote(time).should == "'#{time.strftime fmt}'"
-        quoter.quote(time.strftime(fmt), Time).should == "'#{time.strftime fmt}'"
+        Timecop.freeze Time.now do
+          fmt = '%Y-%m-%d %H:%M:%S'
+          time = Time.parse(Time.now.strftime(fmt))
+          quoted_time = quoter.quote(time)
+          Time.parse(quoted_time).should == time
+          quoted_time = quoter.quote(time.strftime(fmt), Time)
+          Time.parse(quoted_time).should == time
+        end
       end
       it 'quotes a fixnum' do
         fixnum = 10
