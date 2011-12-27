@@ -65,6 +65,7 @@ module Arc
       return quote_string value if value.is_a? String
       quote_string "#{value.strftime '%Y-%m-%d %H:%M:%S'}"
     end
+    alias :quote_timestamp :quote_time
     def quote_numeric value
       value.to_s
     end
@@ -79,6 +80,7 @@ module Arc
       'NULL'
     end
     def quote_binary value
+      value.force_encoding 'BINARY'
       value.gsub!(/\0|\%/n) do |byte|
         case byte
           when "\0" then "%00"
