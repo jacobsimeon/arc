@@ -13,6 +13,7 @@ module Arc
         end
       
         def fetch_item name
+          raise "Table does not exist: #{name}" unless table_names.include? name.to_sym
           SqliteTable.new name, @data_store
         end
       end
