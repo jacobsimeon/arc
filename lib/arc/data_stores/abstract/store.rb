@@ -8,6 +8,7 @@ module Arc
     class AbstractDataStore < ResourcePool
       include ArelCompatibility
       include Arc::Quoting
+      include Arc::Casting
             
       def [] table
         schema[table]
@@ -43,6 +44,40 @@ module Arc
       end
       alias :with_store :with_resource
       alias :columns :[]
+      
+      def type_mappings_for query
+        type_mappings = {}
+        query.instance_variable_get(:@ctx).projections.each do |projection|
+          is_alias = projection.respond_to?(:right)
+          relation = is_alias ? projection.left.relation : projection.relation
+
+          root_projection = is_alias ? projection.left : projection
+          relation_is_alias = root_projection.relation.respond_to?(:left)
+
+          root_relation = relation_is_alias ? relation.left : relation
+
+          table_name = root_relation.name
+          result_column_name = is_alias ? projection.right.to_sym : projection.name
+          table_column_name = root_projection.name
+
+          table = Arel::Table.engine[table_name.to_sym]
+          column = table[table_column_name.to_sym]
+
+          type_mappings[result_column_name] = column.type.to_sym
+        end
+        type_mappings
+      end
+      
+      def result_for query
+        mappings = type_mappings_for query
+        rows = read(query.to_sql)
+        return Array.new(rows.size) do |index|
+          Hash.new do |hash, key|
+            hash[key] = cast rows[index][key], mappings[key]
+          end
+        end
+      end
+      
       private
       #better semantics for a class that deals with 'connections' instead of 'resources'
       def create_connection
