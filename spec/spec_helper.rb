@@ -7,7 +7,7 @@ require 'rspec'
 require 'arc'
 require 'arel'
 require 'q/resource_pool'
-
+require 'timecop'
 
 RSpec.configure do |config|
   config.after(:all) do
