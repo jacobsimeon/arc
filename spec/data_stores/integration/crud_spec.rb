@@ -30,24 +30,35 @@ module Arc
       
       describe '#create and #read'  do
         before :each do
-          properties = {
-            :name => "green hornet",
-            :born_on => Time.now,
-            :photo => "hello",
-            :created_at => Time.now 
-          }
-          im = Arel::InsertManager.new Arel::Table.engine
-          im.insert values_array(:superheros, properties)
-          @result = @store.create im.to_sql
+          Timecop.freeze Time.now do
+            @created_at = Time.parse('2011-12-27 11:52:56 -0700')
+            properties = {
+              :name => "green hornet",
+              :born_on => @created_at,
+              :photo => File.read('spec/support/resources/ironman.gif'),
+              :created_at => @created_at
+            }
+            im = Arel::InsertManager.new Arel::Table.engine
+            im.insert values_array(:superheros, properties)
+            @result = @store.create im.to_sql
+          end
         end
         
         it 'creates a new record' do
+          superheros = @tables[:superheros]
           query = @tables[:superheros]
-            .project('*')
+            .project(
+              superheros[:name],
+              superheros[:born_on],
+              superheros[:created_at],
+              superheros[:photo]
+            )
             .where(@tables[:superheros][:name].eq('green hornet'))
-            .to_sql
           result = @store.read query
           result[0][:name].should == 'green hornet'
+          result[0][:born_on].should == Date.today
+          result[0][:created_at].should == @created_at
+          result[0][:photo].should == File.read('spec/support/resources/ironman.gif').force_encoding("BINARY")
         end
         
         it 'returns the record with a populated primary key' do
@@ -88,7 +99,7 @@ module Arc
           superman.size.should == 0
           superman.size.should == 0
           superman.should be_a(Enumerable)
-        end        
+        end
       end
 
     end
