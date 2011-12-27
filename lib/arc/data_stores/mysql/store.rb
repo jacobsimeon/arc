@@ -9,7 +9,12 @@ module Arc::DataStores
   class MysqlDataStore < AbstractDataStore
     
     def read query
-      execute(query).entries
+      case query
+      when String
+        execute(query).entries
+      when Arel::SelectManager
+        result_for query
+      end
     end
     
     def create sql
@@ -39,6 +44,16 @@ module Arc::DataStores
     
     def schema
       @schema ||= ObjectDefinitions::MysqlSchema.new self
+    end
+    
+    def cast_blob data
+      debugger
+      data
+    end
+    def quote_blob data
+      with_store do |store|
+        "'#{store.escape(data).force_encoding("BINARY")}'"
+      end
     end
     
     private

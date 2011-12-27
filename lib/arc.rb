@@ -9,4 +9,3 @@ require 'q/dispatcher'
 
 require "arc/version"
 require 'arc/data_stores'
-

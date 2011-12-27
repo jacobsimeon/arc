@@ -3,20 +3,22 @@ module Arc
     class CannotCastValueError < StandardError; end
         
     TYPES = { 
-      integer:  'integer',
-      int:      'integer',
-      char:     'string' ,
-      varchar:  'string' ,
-      binary:   'binary' ,
-      date:     'date'   ,
-      datetime: 'time'   ,
-      time:     'time'   ,
-      bool:     'boolean',
-      boolean:  'boolean', 
-      bit:      'boolean',
-      float:    'float'  ,
-      text:     'string' ,
-      bytea:    'binary' ,
+      integer:    'integer',
+      int:        'integer',
+      char:       'string' ,
+      varchar:    'string' ,
+      binary:     'binary' ,
+      date:       'date'   ,
+      datetime:   'time'   ,
+      time:       'time'   ,
+      bool:       'boolean',
+      boolean:    'boolean', 
+      bit:        'boolean',
+      float:      'float'  ,
+      text:       'string' ,
+      bytea:      'binary' ,
+      timestamp:  'timestamp',
+      blob:       'binary'
     }
     
     CAST_METHODS = Hash.new do |cast_methods, key|
@@ -41,9 +43,12 @@ module Arc
       value.to_f
     end
     def cast_time value
+      return value if value.is_a? Time
       Time.parse value
     end
+    alias :cast_timestamp :cast_time
     def cast_date value
+      return value if value.is_a? Date
       Date.parse value
     end
     def cast_binary value
