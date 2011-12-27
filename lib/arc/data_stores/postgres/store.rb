@@ -4,9 +4,16 @@ require 'arc/data_stores/postgres/object_definitions'
 module Arc
   module DataStores
     class PostgresDataStore < AbstractDataStore
+      
       def read query
-        execute(query).to_a.symbolize_keys!
-      end  
+        case query
+        when String
+          execute(query).to_a.symbolize_keys!
+        when Arel::SelectManager
+          result_for query
+        end
+      end
+      
       def create sql
         table = sql.match(/\AINSERT into ([^ (]*)/i)[1]
         sql[-1] = sql[-1] == ';' ? '' : sql[-1]
@@ -23,6 +30,19 @@ module Arc
       def schema
         @schema ||= ObjectDefinitions::PostgresSchema.new self
       end
+      
+      def quote_binary data
+        with_store do |store|
+          "'#{store.escape_bytea data}'"
+        end
+      end
+      
+      def cast_binary data
+        with_store do |store|
+          store.unescape_bytea data
+        end
+      end
+      
       private
       def create_connection
         PGconn.connect({
