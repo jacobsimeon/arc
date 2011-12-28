@@ -8,29 +8,6 @@ Mysql2::Client.default_query_options.merge!({
 module Arc::DataStores
   class MysqlDataStore < AbstractDataStore
     
-    # def read query
-    #   case query
-    #   when String
-    #     execute(query).entries
-    #   when Arel::SelectManager
-    #     result_for query
-    #   end
-    # end
-    # 
-    # def create sql
-    #   table = sql.match(/\AINSERT into ([^ (]*)/i)[1]
-    #   execute sql
-    #   read("select * from #{table} where id = " + last_row_id.to_s).first
-    # end
-    # 
-    # def update sql
-    #   execute sql
-    # end
-    # 
-    # def destroy sql
-    #   execute sql
-    # end
-    
     def quote_column_name table
       "`#{table}`"
     end

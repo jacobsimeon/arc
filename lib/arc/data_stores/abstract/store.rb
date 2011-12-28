@@ -77,6 +77,7 @@ module Arc
           
       def execute query
         #adapters should override this method to execute a query against the database
+        #the methods should return an array-like object of hash-like objects
         raise NotImplementedError
       end
       alias :with_store :with_resource
