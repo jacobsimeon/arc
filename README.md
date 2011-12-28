@@ -1,14 +1,20 @@
-#Arc (**AR**el **C**onnection)
-Arc lets you use arel without the cost of including active record as a dependency.
-[Arel][1] is a very capable and [inspired][2] bit of code which provides machinery for building an [abstract syntax tree][2](ast) of a complex sql query in pure ruby.
-
-##Arc is:
+#Arc (**Ar**el **C**onnection)
 Arc is a database connection engine that provides everything Arel needs to construct an AST.
 You can use sqlite, postgresql and/or mysql.
-Arc handles quoting and casting of values when you create or update records and results are wrapped in lazy loading arrays and hashes.
-Arc provides a standard and **thread safe** CRUD interface for executing queries
-Arc datastores have a hash-like interface that provides information about the tables and columns in your database:
-Arc has two dependencies: [q][6] and arel itself.
+
+Arc gives you:
+
+ - quoting and casting of values as they enter and exit the data store
+ - standard and **thread safe** CRUD interface for executing queries
+ - a hash-like interface that provides information about the tables and columns in your database (see below)
+
+There are two dependencies: [q][6] and arel itself.
+
+Arc lets you use arel without the cost of including active record as a dependency.
+
+[Arel][1] is a very capable and [inspired][2] bit of code which provides machinery for building an [abstract syntax tree][2](ast) of a complex sql query in pure ruby.
+
+
 ##Arc is *not*:
 Arc isn't an ORM.
 There has been some [recent discussion][4] about the state of ruby ORMs.  Arc does not make any attempt to [pass judgement][5] against any of the fine ORMs out there.  Arc came out of a need for a lighter weight method for manipulating data in a database.  Arc gives developers flexibility to build their own frameworks and write smaller libraries with fewer dependencies.
@@ -19,9 +25,8 @@ Add this to your Gemfile
     gem 'arc'
 
 ##Basics
-Connect to a database:
-Arc will automatically load in and require the adapter you request
-The arguments that get passed to the constructor are similar (if not identical) to the arguments for ActiveRecord::Base.establish_connection
+####Connect to a database:
+
     require 'arc'
     @store = Arc::DataStores[:postgres].new({
       database: arc_development,
@@ -62,6 +67,38 @@ Build an Arel query and pass it to one of the store's CRUD methods:
     # => { :id => 4, :name => 'green hornet', :is_awesome => true }
 
 ##Advanced
+Arc handles some of the more complex features of arel, like complex joins:
+
+    s = Arel::Table.new :superheros
+    sp = Arel::Table.new :superheros_powers
+    p = Arel::Table.new :powers
+    stmt = s.join(sp).on(s[:id].eq(sp[:superhero_id]))
+     .join(p).on(p[:id].eq(sp[:power_id]))
+     .project(
+       s[:name].as('superhero_name'),
+       p[:name].as('power_name')
+     )
+    @store.read stmt
+    # => [{:superhero_name => 'superman', :power_name => 'flight'},
+    # =>  {:superhero_name => 'superman', :power_name => 'x-ray-vision'},
+    # =>  {:superhero_name => 'batman', :power_name => "a belt'}]
+
+##TODO
+  Arc is a new library.  The test suite has excellent coverage, but bugs need to be identified, tested and fixed.
+  Next step is to add RDoc magic.
+  A long term goal would be to add on to the schema interface to allow for some ddl operations.
+  
+##Development
+Install dependencies with bundler
+Make sure you have bundler installed, point your terminal to the project's root directory and run
+
+    $ bundle install
+Running the tests:
+
+    $ rake test
+To run the tests agains a particular adapter
+
+    $ rake test:adapter[<your-adapter-here>]
 
 
 [1]: http://github.com/rails/arel
