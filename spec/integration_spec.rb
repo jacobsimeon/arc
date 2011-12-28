@@ -24,21 +24,11 @@ describe Arc do
     @store.read query
   end
   
-  before :each do
-    @store = Arc::DataStores[ArcTest.adapter].new ArcTest.config
-    Arel::Table.engine = @store
+  before :all do
+    @store = ArcTest.get_store
     @tables = Hash.new do |hash, key|
       hash[key] = Arel::Table.new key
     end
-    ddl_file = "spec/support/schemas/#{ArcTest.adapter.to_s}.sql"
-    ddl = File.read(ddl_file)
-    @store.schema.execute_ddl ddl
-    load "spec/support/seed.rb"
-  end
-
-  after :each do
-    drop_file = "spec/support/schemas/drop_#{ArcTest.adapter.to_s}.sql"
-    @store.schema.execute_ddl File.read(drop_file)
   end
 
   it "Safely executes queries initiated on different threads" do
