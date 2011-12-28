@@ -27,6 +27,7 @@ Add this to your Gemfile
 ##Basics
 ####Connect to a database:
 
+    ```ruby
     require 'arc'
     @store = Arc::DataStores[:postgres].new({
       database: arc_development,
@@ -43,6 +44,7 @@ Add this to your Gemfile
     # => true
     @store[:superheros][:is_awesome].type
     # => :bool
+    ```
     
 ####Execute a query
 Build an Arel query and pass it to one of the store's CRUD methods:
