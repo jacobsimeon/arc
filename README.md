@@ -27,22 +27,24 @@ Add this to your Gemfile
 ##Basics
 ####Connect to a database:
 
-    require 'arc'
-    @store = Arc::DataStores[:postgres].new({
-      database: arc_development,
-      host: localhost,
-      user: superman
-    })
-    @store[:superheros]
-    # => <Arc::DataStores::ObjectDefinitions::SqliteTable:0x007f86d4026f68 @name="superheros">
-    @store[:superheros].column_names
-    # => [:is_awesome, :name, :id ]
-    @store[:superheros][:id]
-    # => #<Arc::DataStores::ObjectDefinitions::SqliteColumn @name='id'>
-    @store[:superheros][:id].primary_key?
-    # => true
-    @store[:superheros][:is_awesome].type
-    # => :bool
+```ruby
+require 'arc'
+@store = Arc::DataStores[:postgres].new({
+  database: arc_development,
+  host: localhost,
+  user: superman
+})
+@store[:superheros]
+# => <Arc::DataStores::ObjectDefinitions::SqliteTable:0x007f86d4026f68 @name="superheros">
+@store[:superheros].column_names
+# => [:is_awesome, :name, :id ]
+@store[:superheros][:id]
+# => #<Arc::DataStores::ObjectDefinitions::SqliteColumn @name='id'>
+@store[:superheros][:id].primary_key?
+# => true
+@store[:superheros][:is_awesome].type
+# => :bool
+```
     
 ####Execute a query
 Build an Arel query and pass it to one of the store's CRUD methods:
