@@ -3,7 +3,7 @@ require 'arc/data_stores/postgres/store'
 
 describe Arc::DataStores::PostgresDataStore do
   before :each do
-    @store = Arc::DataStores[:postgres].new ArcTest.config[:postgres]
+    @store = Arc::DataStores[:postgres].new ArcTest._config[:postgres]
     ddl = File.read "spec/support/schemas/postgres.sql"
     @store.schema.execute_ddl ddl
   end

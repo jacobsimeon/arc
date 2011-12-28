@@ -1,4 +1,6 @@
 require 'bundler/gem_tasks'
+require 'yaml'
+
 task :test do
   ['sqlite', 'postgres', 'mysql'].each do |environment|
     puts "Running tests for environment #{environment}"
@@ -29,6 +31,16 @@ task :yank do
 end
 
 namespace :test do
+  task :integration do
+    before = ENV['ARC_ENV']
+    adapters = YAML::load(File.read("./spec/support/config.yml")).keys
+    adapters.each do |adapter|
+      ENV['ARC_ENV'] = adapter
+      puts "Running integration test for adapter: #{adapter}"
+      system "rspec spec/integration_spec.rb"
+    end
+    ENV['ARC_ENV'] = before
+  end
   task :adapter, :env do |task, args|
     ENV['ARC_ENV'] = args.env
     system 'rspec spec/data_stores/integration/'

@@ -54,7 +54,7 @@ data.each_pair do |name, tuples|
       [table[key], tuple[key]]
     end
     stmt.insert(values)
-    record = Arel::Table.engine.create(stmt.to_sql)
+    record = Arel::Table.engine.create(stmt)
     ids[name][record[:name]] = record[:id]
   end
 end
@@ -70,5 +70,5 @@ power_sets.each do |set|
     [power_map[:superhero_id], ids[:superheros][set[0]]],
     [power_map[:power_id], ids[:powers][set[1]]]
   ])
-  Arel::Table.engine.create im.to_sql
+  Arel::Table.engine.create im
 end

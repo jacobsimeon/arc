@@ -71,12 +71,12 @@ module Arc
       end
       it 'quotes an object based on column type' do
         superman = "superman"
-        ArcTest.with_store do |store|
-          c = store[:superheros][:name]
-          quoter.quote(superman, c).should == "'superman'"
-          c = store[:superheros][:id]
-          quoter.quote(10, c).should == '10'
-        end
+        store = ArcTest.get_store
+        c = store[:superheros][:name]
+        quoter.quote(superman, c).should == "'superman'"
+        c = store[:superheros][:id]
+        quoter.quote(10, c).should == '10'
+        ArcTest.drop_store store
       end
       it 'quotes a bigdecimal' do
         big_decimal = BigDecimal.new((1 << 100).to_s)

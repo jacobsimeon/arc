@@ -3,7 +3,7 @@ require 'arc/data_stores/mysql/store'
 
 describe Arc::DataStores::MysqlDataStore do
   before :each do
-    @store = Arc::DataStores[:mysql].new ArcTest.config[:mysql]    
+    @store = Arc::DataStores[:mysql].new ArcTest._config[:mysql]    
   end
   
   it 'saves binary data', :wip => true do

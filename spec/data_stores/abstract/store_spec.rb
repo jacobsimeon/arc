@@ -6,7 +6,7 @@ module Arc
       before :each do
         @store = AbstractDataStore.new ArcTest.config[:empty]
         @query = "omg"
-        @sstore = Arc::DataStores[:sqlite].new ArcTest.config[:sqlite]
+        @sstore = Arc::DataStores[:sqlite].new ArcTest._config[:sqlite]
         @sstore.schema.execute_ddl File.read("spec/support/schemas/sqlite.sql")
         Arel::Table.engine = @sstore
       end

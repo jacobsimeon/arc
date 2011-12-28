@@ -4,33 +4,10 @@ require 'arc/data_stores/sqlite/object_definitions'
 module Arc
   module DataStores
     class SqliteDataStore < AbstractDataStore
-      
-      def read query
-        case query
-        when String
-          execute(query).symbolize_keys!
-        when Arel::SelectManager
-          result_for query
-        end
-      end
-      
-      def create sql
-        table = sql.match(/\AINSERT into ([^ (]*)/i)[1]
-        execute sql
-        read("select * from #{table} where id = last_insert_rowid();")[0]
-      end
-      
-      def update sql
-        execute sql
-      end
-      
-      def destroy sql
-        execute sql
-      end
 
       def execute query
         with_store do |connection|
-          result = connection.execute(query)
+          result = connection.execute(query).symbolize_keys!
         end
       end
       

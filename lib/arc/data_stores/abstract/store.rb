@@ -18,24 +18,61 @@ module Arc
         raise NotImplementedError
       end
       
-      def create query
-        #add new data
-        raise NotImplementedError
-      end
-
       def read query
-        #read existing data
-        raise NotImplementedError
+        case query
+        when String
+          execute(query).symbolize_keys!
+        when Arel::SelectManager
+          result_for query
+        end
       end
-
-      def update query
-        #update existing data
-        raise NotImplementedError
+      
+      def create stmt
+        case stmt
+        when String
+          execute stmt
+        when Arel::InsertManager
+          table = stmt.instance_variable_get(:@ast).relation
+          execute stmt.to_sql
+          projections = schema[table.name.to_sym].column_names.map{ |c| table[c.to_sym] }
+          read(
+            table.project(*projections).where(
+              table.primary_key.eq(
+                Arel.sql(last_insert_rowid(table.name, table.primary_key.name).to_s)
+              )
+            )
+          )[0]
+        end
       end
-
-      def destroy query
-        #destroy existing data
-        raise NotImplementedError
+      
+      def update stmt, id=nil
+        case stmt
+        when String
+          execute stmt
+        when Arel::UpdateManager
+          execute stmt.to_sql
+          if id
+            table = stmt.instance_variable_get(:@ast).relation
+            projections = schema[table.name.to_sym].column_names.map{ |c| table[c.to_sym] }
+            read(
+              table.project(*projections)
+                .where(table.primary_key.eq id)
+            )[0]
+          end
+        end
+      end
+      
+      def destroy stmt
+        case stmt
+        when String
+          execute stmt
+        when Arel::DeleteManager
+          execute stmt.to_sql
+        end
+      end
+      
+      def last_insert_rowid table_name, pk_name
+        'last_insert_rowid()'
       end
           
       def execute query
