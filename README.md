@@ -21,8 +21,11 @@ There has been some [recent discussion][4] about the state of ruby ORMs.  Arc do
 
 ##Installation
 Add this to your Gemfile
-    gem 'pg' #'mysql2' or 'sqlite'
-    gem 'arc'
+
+```ruby
+gem 'pg' #'mysql2' or 'sqlite'
+gem 'arc'
+```
 
 ##Basics
 ####Connect to a database:
@@ -51,39 +54,45 @@ Build an Arel query and pass it to one of the store's CRUD methods:
 
 "Read" Example:
 
-    s = Arel::Table.new :superheros
-    s.project(s[:name], s[:id], s[:is_awesome])
-    @store.read s
-    # => [{ :id => 1, :name => 'superman', :is_awesome => true  }
-    # =>  { :id => 2, :name => 'batman',   :is_awesome => false }
-    # =>  { :id => 3, :name => 'ironman',  :is_awesome => nil   }]
+```ruby
+s = Arel::Table.new :superheros
+s.project(s[:name], s[:id], s[:is_awesome])
+@store.read s
+# => [{ :id => 1, :name => 'superman', :is_awesome => true  }
+# =>  { :id => 2, :name => 'batman',   :is_awesome => false }
+# =>  { :id => 3, :name => 'ironman',  :is_awesome => nil   }]
+```
 
 "Create" example
 
-    im = Arel::InsertManager.new
-    im.insert([
-      [superheros[:name], 'green hornet'],
-      [superheros[:is_awesome], true]
-    ])
-    @store.create im
-    # => { :id => 4, :name => 'green hornet', :is_awesome => true }
+```ruby
+im = Arel::InsertManager.new
+im.insert([
+  [superheros[:name], 'green hornet'],
+  [superheros[:is_awesome], true]
+])
+@store.create im
+# => { :id => 4, :name => 'green hornet', :is_awesome => true }
+```
 
 ##Advanced
 Arc handles some of the more complex features of arel, like complex joins:
 
-    s = Arel::Table.new :superheros
-    sp = Arel::Table.new :superheros_powers
-    p = Arel::Table.new :powers
-    stmt = s.join(sp).on(s[:id].eq(sp[:superhero_id]))
-     .join(p).on(p[:id].eq(sp[:power_id]))
-     .project(
-       s[:name].as('superhero_name'),
-       p[:name].as('power_name')
-     )
-    @store.read stmt
-    # => [{:superhero_name => 'superman', :power_name => 'flight'},
-    # =>  {:superhero_name => 'superman', :power_name => 'x-ray-vision'},
-    # =>  {:superhero_name => 'batman', :power_name => "a belt'}]
+```ruby
+s = Arel::Table.new :superheros
+sp = Arel::Table.new :superheros_powers
+p = Arel::Table.new :powers
+stmt = s.join(sp).on(s[:id].eq(sp[:superhero_id]))
+ .join(p).on(p[:id].eq(sp[:power_id]))
+ .project(
+   s[:name].as('superhero_name'),
+   p[:name].as('power_name')
+ )
+@store.read stmt
+# => [{:superhero_name => 'superman', :power_name => 'flight'},
+# =>  {:superhero_name => 'superman', :power_name => 'x-ray-vision'},
+# =>  {:superhero_name => 'batman', :power_name => "a belt'}]
+```
 
 ##TODO
   Arc is a new library.  The test suite has excellent coverage, but bugs need to be identified, tested and fixed.
