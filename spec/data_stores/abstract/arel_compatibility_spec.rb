@@ -7,9 +7,6 @@ module Arc
       before :all do
         @s = ArcTest.get_store
       end
-      after :all do
-        ArcTest.drop_store @s
-      end
 
       it '#responds to #connection_pool#spec#config' do  
         @s.connection_pool.spec.config[:adapter].should == ArcTest.adapter.to_s
