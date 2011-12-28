@@ -5,7 +5,7 @@ Arc lets you use arel without the cost of including active record as a dependenc
 ##Arc is:
   Arc is a database connection engine that provides everything Arel needs to construct an AST
   Arc supports sqlite, postgresql and mysql
-  ```ruby
+  ``` ruby
     @store = Arel::Table.engine = Arc::DataStores[:sqlite].new :database => ":memory:"
     superheros = Arel::Table.new :superheros
     query = superheros.project(
@@ -18,7 +18,7 @@ Arc lets you use arel without the cost of including active record as a dependenc
   ```
 
   Arc handles quoting and casting of values when you create or update records and results are wrapped in lazy loading arrays and hashes.
-  ```ruby
+  ``` ruby
     @result.class
     # => Array
     @result[0].class
@@ -28,7 +28,7 @@ Arc lets you use arel without the cost of including active record as a dependenc
   ```
 
   Arc provides a standard and **thread safe** CRUD interface for executing queries
-  ```ruby
+  ``` ruby
     @store.read superheros.project(superheros[:name])
     # => [<superhero names here>]
     im = Arel::InsertManager
@@ -39,7 +39,7 @@ Arc lets you use arel without the cost of including active record as a dependenc
   ```
   
   Arc tells what kind of schema you're working with
-  ```ruby
+  ``` ruby
     @store[:superheros]
     # => <Arc::DataStores::ObjectDefinitions::SqliteTable:0x007f86d4026f68 @name="superheros">
     @store[:superheros].column_names
